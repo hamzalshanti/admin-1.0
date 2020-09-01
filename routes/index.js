@@ -4,7 +4,7 @@ const router = Router();
 
 // @GET     @desc: show index page
 router.get('/', (req, res) => {
-    res.send('hi');
+    res.render('index', { title: 'Home' });
 });
 
 
