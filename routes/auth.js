@@ -25,5 +25,32 @@ router.post('/login', passport.authenticate(
     )
 );
 
+// @desc    Auth with Google
+// @route   GET /auth/google
+router.get('/google',  passport.authenticate('google', { scope: ['profile', 'email'] }));
+
+// @desc    callback
+// @route   GET /auth/google/callback
+router.get(
+    '/google/redirect', 
+    passport.authenticate('google', { failureRedirect: '/auth/login' }),
+    (req, res) => {
+        res.redirect('/')
+    }
+);
+
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+router.get('/facebook/redirect', passport.authenticate('facebook', { failureRedirect: '/auth/login' }), 
+(req, res) => {
+    res.redirect('/');
+});
+
+
+// @GET     @DESC: logout
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+});
 
 module.exports = router;

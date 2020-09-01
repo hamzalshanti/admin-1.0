@@ -16,6 +16,8 @@ const postSignupController = async (req, res) => {
         let { errors } = validationResult(req);
         if(errors.length > 0) return res.render('signup', { layout: false, title: 'Singup', fullName, email, errors });
         const user = new User ({ fullName, email, password });
+        const salt = await bcrypt.genSalt();
+        user.password = await bcrypt.hash(user.password, salt);
         console.log(user);
         await user.save();
         req.flash('success', 'created done you can login now');
