@@ -4,19 +4,31 @@ const logger = require('morgan');
 const session = require('express-session');
 const exphbs = require('express-handlebars');
 const passport = require('passport');
+const flash = require('connect-flash');
 const path = require('path');
 const db = require('./config/db');
 const app = express();
 
 // Routes Decleration
 const indexRoutes = require('./routes/index');
+const authRoutes = require('./routes/auth');
 
 
 // Database Excution
 db();
 
+// Passport config 
+require('./config/passport');
+
 // Middlewares
 app.use(logger('dev'));
+app.use(session({
+    secret: 'sdasdada',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 180 * 60 * 1000 }
+}));
+app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -26,12 +38,15 @@ app.use(express.urlencoded({ extended: false }));
 app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
 app.set('view engine', '.hbs');
 
-
+// Passport Init
+app.use(passport.initialize());
+app.use(passport.session());
 
 
 
 // Routes Execution
 app.use('/', indexRoutes);
+app.use('/auth', authRoutes);
 
 
 // Error handle
