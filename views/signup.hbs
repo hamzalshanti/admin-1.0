@@ -15,7 +15,6 @@
 			<a href="/auth/google" class="btn btn-danger btn-block"><i class="fab fa-google"></i> Sign up with <b>Google</b></a>
         </div>
 		<div class="or-seperator"><i>or</i></div>
-
         {{#each errors}}
             <div class="alert alert-danger">{{msg}}</div>
         {{/each}}
@@ -30,6 +29,7 @@
                 </div>
                 <input type="text" class="form-control" name="fullName" placeholder="Full Name" value="{{fullName}}">
             </div>
+            <small style="color: red">{{errorObject.fullName}}</small>
         </div>
         {{!-- /form-group --}}
 
@@ -43,6 +43,7 @@
                 </div>
                 <input type="text" class="form-control" name="email" placeholder="Email" value="{{email}}">
             </div>
+            <small style="color: red">{{errorObject.email}}</small>
         </div>
         {{!-- /form-group --}}
 
@@ -56,6 +57,7 @@
                 </div>
                 <input type="password" class="form-control" name="password" placeholder="Password">
             </div>
+            <small style="color: red">{{errorObject.password}}</small>
         </div>
         {{!-- /form-group --}}
 
@@ -69,6 +71,7 @@
                 </div>
                 <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password">
             </div>
+            <small style="color: red">{{errorObject.confirmPassword}}</small>
         </div>        
         {{!-- /form-group --}}
 

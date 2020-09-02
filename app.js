@@ -10,8 +10,8 @@ const db = require('./config/db');
 const app = express();
 
 // Routes Decleration
-const indexRoutes = require('./routes/index');
-const authRoutes = require('./routes/auth');
+const indexRoutes = require('./routes/indexRoutes');
+const authRoutes = require('./routes/authRoutes');
 
 
 // Database Excution
