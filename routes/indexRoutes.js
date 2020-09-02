@@ -7,4 +7,6 @@ const { siteGuard } = require('../middlewares/authMiddleware');
 router.get('/', siteGuard, getHomeController);
 
 
+
+
 module.exports = router;

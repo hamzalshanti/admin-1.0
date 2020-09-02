@@ -14,6 +14,7 @@ const app = express();
 // Routes Decleration
 const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 
 // Database Excution
@@ -52,6 +53,8 @@ app.use(passport.session());
 // Routes Execution
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
+app.use('/admin-panel', adminRoutes);
+
 
 
 // Error handle

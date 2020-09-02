@@ -31,7 +31,6 @@ const postSignupController = async (req, res) => {
 
 const getLogoutController = (req, res) => {
     req.logout();
-    console.log('done');
     res.redirect('/');
 }
 
