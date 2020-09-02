@@ -5,6 +5,8 @@ const session = require('express-session');
 const exphbs = require('express-handlebars');
 const passport = require('passport');
 const flash = require('connect-flash');
+const mongoose = require('mongoose');
+const mongoStore = require('connect-mongo')(session);
 const path = require('path');
 const db = require('./config/db');
 const app = express();
@@ -26,6 +28,9 @@ app.use(session({
     secret: 'sdasdada',
     resave: false,
     saveUninitialized: false,
+    store: new mongoStore({
+        url: process.env.MONGO_URI
+    }),
     cookie: { maxAge: 180 * 60 * 1000 }
 }));
 app.use(flash());

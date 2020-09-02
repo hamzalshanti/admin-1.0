@@ -31,7 +31,8 @@ const postSignupController = async (req, res) => {
 
 const getLogoutController = (req, res) => {
     req.logout();
-    res.redirect('/auth/login');
+    console.log('done');
+    res.redirect('/');
 }
 
 module.exports = {
