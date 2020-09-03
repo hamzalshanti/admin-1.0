@@ -6,6 +6,7 @@ const exphbs = require('express-handlebars');
 const passport = require('passport');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
+const methodOverride = require('method-override');
 const mongoStore = require('connect-mongo')(session);
 const path = require('path');
 const db = require('./config/db');
@@ -34,6 +35,7 @@ app.use(session({
     }),
     cookie: { maxAge: 180 * 60 * 1000 }
 }));
+app.use(methodOverride('_method'));
 app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());

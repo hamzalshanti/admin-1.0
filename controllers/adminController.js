@@ -17,8 +17,8 @@ const getAddProductController = async (req, res) => {
 }
 
 const postAddProductController = async (req, res) => {
-    console.log(req.files);
     try {
+        console.log(req.files);
         const { 
             productName, 
             productPrice, 
@@ -33,9 +33,10 @@ const postAddProductController = async (req, res) => {
             productQty,
             productDescription,
             category,
-            productTags: productTags.toLowerCase().replace(/, /g, ',')
+            productImages: req.files.map(file => file.filename),
+            productTags: productTags.toLowerCase().replace(/, /g, ','),
         });
-        console.log('Product add Done');
+        res.redirect('/admin-panel/product/show');
     } catch(error) {
         console.log(error);
     }

@@ -46,7 +46,13 @@
                       <td>{{productName}}</td>
                       <td>{{productPrice}}</td>
                       <td>{{productQty}}</td>
-                      <td>Delete</td>
+                      <td>
+                        <a href="/admin-panel/product/edit" type="button" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <form action="/admin-panel/product/show?_method=DELETE" method="POST" class="d-inline-block" id="myForm">
+                          <button type="submit" class="btn btn-danger" id="deleteBtn"><i class="fas fa-times"></i></button>
+                        </form>
+
+                      </td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -73,4 +79,17 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
->
+<script>
+  var submitLink = document.getElementById('deleteBtn'),
+    myForm = document.getElementById('myForm');
+
+  submitLink.addEventListener('click', function(e) {
+      if (confirm('Are You Sure?')) {
+          myForm.submit();
+      }else{
+        e.preventDefault();
+      }
+  });
+</script>
+{{>admin/scripts}}
+{{>admin/tableScripts}}

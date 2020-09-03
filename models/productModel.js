@@ -20,8 +20,8 @@ const productSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'category'
     },
-    productImage: {
-        type: String,
+    productImages: {
+        type: [],
     },
     productTags: {
         type: String

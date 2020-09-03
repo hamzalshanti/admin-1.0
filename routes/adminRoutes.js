@@ -12,31 +12,9 @@ const {
 
 } = require('../controllers/adminController');
 
-const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-})
+const uploader = require('../middlewares/multerMiddleware');
+const upload = uploader.array('productImage', 10);
 
-// const fileFilter = (req, file, cb) => {
-//     if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-//         cb(null, true);
-//     } else {
-//         cb(null, false);
-//     }
-// }
-
-const upload = multer({
-    storage: storage,
-   // limits: {
-      //  fieldSize: 1024 * 1024 * 5
-    //},
-    //fileFilter: fileFilter
-});
 
 router.get('/', dashboardController);
 
@@ -44,9 +22,17 @@ router.get('/', dashboardController);
 // Product
 router.get('/product/add', getAddProductController);
 
-router.post('/product/add', upload.array('productImage', 10), postAddProductController);
+router.post('/product/add', upload, postAddProductController);
 
 router.get('/product/show', showProductsController);
+
+router.delete('/product/show', (req, res) => {
+    res.send('Delete');
+});
+
+router.put('/product/show', (req, res) => {
+    res.send('Edit');
+});
 
 // Category
 router.get('/category/add', getAddCategoryController);
