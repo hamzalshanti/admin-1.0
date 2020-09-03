@@ -43,7 +43,18 @@ app.use(express.urlencoded({ extended: false }));
 
 
 // View Setting
-app.engine('.hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }));
+app.engine('.hbs', exphbs({ 
+    defaultLayout: 'main', 
+    extname: '.hbs',
+    helpers: {
+        isEqual: function(v1, v2, options) {
+            if(v1.toString() === v2.toString()) {
+              return options.fn(this);
+            }
+            return options.inverse(this);
+          }
+    }
+}));
 app.set('view engine', '.hbs');
 
 // Passport Init

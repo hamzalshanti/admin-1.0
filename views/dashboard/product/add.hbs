@@ -27,45 +27,76 @@
             <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Add Product</h3>
+                <h3 class="card-title">{{formTitle}}</h3>
               </div>
               <!-- /.card-header -->
               <!-- form start -->
               <form role="form" method="post" enctype="multipart/form-data">
                 <div class="card-body">
-  
+                    
                   <div class="form-group">
                     <label for="productName">Product Name</label>
-                    <input type="text" class="form-control" name="productName" id="productName" placeholder="Enter Product Name">
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    name="productName" 
+                    id="productName" 
+                    placeholder="Enter Product Name" 
+                    value="{{product.productName}}">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productPrice">Product Price</label>
-                    <input type="text" class="form-control" name="productPrice" id="productPrice" placeholder="Enter Price In Dollar">
+                    <input 
+                    type="text" 
+                    class="form-control" 
+                    name="productPrice" 
+                    id="productPrice" 
+                    placeholder="Enter Price In Dollar"
+                    value="{{product.productPrice}}">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productQty">Product Quntity</label>
-                    <input type="number" class="form-control" name="productQty" id="productQty" placeholder="Enter Product Qunitiy">
+                    <input 
+                    type="number" 
+                    class="form-control" 
+                    name="productQty" 
+                    id="productQty" 
+                    placeholder="Enter Product Qunitiy"
+                    value="{{product.productQty}}">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productDescription">Product Description</label>
-                    <textarea name="productDescription" id="productDescription"  class="form-control"></textarea>
+                    <textarea 
+                    name="productDescription" 
+                    id="productDescription" 
+                    class="form-control"
+                    >{{product.productDescription}}</textarea>
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="category">Select Category</label>
                     <select name="category" id="category" class="form-control">
-                      <option value="-1" selected>Uncategorize</option>
-                      
-                      {{#each categories}}
-                      <option value="{{ _id }}">{{categoryName}}</option>
-                      {{/each}}
+                      <option value="-1" selected>uncategorized</option>
+                      {{#if product}}
+                        {{#each categories}}
+                          {{#isEqual ../product.category _id}}
+                          <option value="{{_id}}" selected>{{categoryName}}</option>
+                          {{else}}
+                          <option value="{{_id}}">{{categoryName}}</option>
+                          {{/isEqual}}
+                        {{/each}}
+                      {{else}}
+                        {{#each categories}}
+                          <option value="{{_id}}">{{categoryName}}</option>
+                        {{/each}}
+                      {{/if}}
                     </select>
                   </div>
                   {{!-- /form-group --}}
@@ -86,7 +117,13 @@
 
                   <div class="form-group">
                     <label for="productTags">Product Tags</label>
-                    <input type="text" name="productTags" id="productTags" class="form-control" placeholder="Example: Nice, KORA, Discount, etc .." />
+                    <input 
+                    type="text"
+                    name="productTags" 
+                    id="productTags"
+                    class="form-control"
+                    placeholder="Example: Nice, KORA, Discount, etc .." 
+                    value="{{product.productTags}}">
                   </div>
                   {{!-- /form-group --}}
 

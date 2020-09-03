@@ -12,7 +12,21 @@ const getAddProductController = async (req, res) => {
     const categories = await Category.find();
     res.render('dashboard/product/add', { 
         layout: 'admin', 
-        categories: categories.map(category => category.toJSON())
+        categories: categories.map(category => category.toJSON()),
+        formTitle: 'Add Product'
+    });
+}
+
+const getEditProductController = async (req, res) => {
+    const categories = await Category.find();
+    const product = await Product.findById(req.params.id);
+    console.log(product.toJSON());
+    //console.log(product);
+    res.render('dashboard/product/add', { 
+        layout: 'admin', 
+        categories: categories.map(category => category.toJSON()),
+        product: product.toJSON(),
+        formTitle: 'Edit Product'
     });
 }
 
@@ -95,8 +109,10 @@ module.exports = {
     getAddProductController,
     postAddProductController,
     showProductsController,
+    getEditProductController,
     getLoginController,
     getAddCategoryController,
     postAddCategoryController,
     showCategoriesController,
+    
 }
