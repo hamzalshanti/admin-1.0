@@ -31,40 +31,41 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form">
+              <form role="form" method="post" enctype="multipart/form-data">
                 <div class="card-body">
   
                   <div class="form-group">
                     <label for="productName">Product Name</label>
-                    <input type="text" class="form-control" id="productName" placeholder="Enter Product Name">
+                    <input type="text" class="form-control" name="productName" id="productName" placeholder="Enter Product Name">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productPrice">Product Price</label>
-                    <input type="text" class="form-control" id="productPrice" placeholder="Enter Price In Dollar">
+                    <input type="text" class="form-control" name="productPrice" id="productPrice" placeholder="Enter Price In Dollar">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productQty">Product Quntity</label>
-                    <input type="number" class="form-control" id="productQty" placeholder="Enter Product Qunitiy">
+                    <input type="number" class="form-control" name="productQty" id="productQty" placeholder="Enter Product Qunitiy">
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productDescription">Product Description</label>
-                    <textarea name="productDescription" id="productDescription"  class="form-control">
-                    </textarea>
+                    <textarea name="productDescription" id="productDescription"  class="form-control"></textarea>
                   </div>
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="category">Select Category</label>
                     <select name="category" id="category" class="form-control">
-                      <option value="">Category1</option>
-                      <option value="">Category2</option>
-                      <option value="">Category3</option>
+                      <option value="-1" selected>Uncategorize</option>
+                      
+                      {{#each categories}}
+                      <option value="{{ _id }}">{{categoryName}}</option>
+                      {{/each}}
                     </select>
                   </div>
                   {{!-- /form-group --}}
@@ -73,15 +74,22 @@
                     <label for="exampleInputFile">Product Main Image</label>
                     <div class="input-group">
                       <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="exampleInputFile">
-                        <label class="custom-file-label" for="exampleInputFile">Choose Image</label>
+                        <input type="file" name="productImage" class="form-control" id="exampleInputFile" multiple>
+                        {{!-- <label class="custom-file-label" for="exampleInputFile">Choose Image</label> --}}
                       </div>
-                      <div class="input-group-append">
+                      {{!-- <div class="input-group-append">
                         <span class="input-group-text" id="">Upload</span>
-                      </div>
+                      </div> --}}
                     </div>
                   </div>
                   {{!-- /form-group --}}
+
+                  <div class="form-group">
+                    <label for="productTags">Product Tags</label>
+                    <input type="text" name="productTags" id="productTags" class="form-control" placeholder="Example: Nice, KORA, Discount, etc .." />
+                  </div>
+                  {{!-- /form-group --}}
+
 
                 </div>
                 <!-- /.card-body -->
