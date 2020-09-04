@@ -9,11 +9,14 @@ const {
     getAddCategoryController,
     postAddCategoryController,
     showCategoriesController,
-    getEditProductController
+    getEditProductController,
+    putEditProductController
 } = require('../controllers/adminController');
 
 const uploader = require('../middlewares/multerMiddleware');
 const upload = uploader.array('productImage', 10);
+const { productValidation } = require('../validation');
+
 
 
 router.get('/', dashboardController);
@@ -24,7 +27,9 @@ router.get('/product/add', getAddProductController);
 
 router.get('/product/edit/:id', getEditProductController);
 
-router.post('/product/add', upload, postAddProductController);
+router.post('/product/add', upload, productValidation, postAddProductController);
+
+router.put('/product/edit', upload, productValidation, putEditProductController);
 
 router.get('/product/show', showProductsController);
 

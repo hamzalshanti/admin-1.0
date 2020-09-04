@@ -31,9 +31,14 @@
               </div>
               <!-- /.card-header -->
               <!-- form start -->
-              <form role="form" method="post" enctype="multipart/form-data">
+              <form 
+              {{#if product}} 
+              action="/admin-panel/product/edit?_method=PUT"
+              {{/if}}
+              method="post" 
+              enctype="multipart/form-data">
                 <div class="card-body">
-                    
+            
                   <div class="form-group">
                     <label for="productName">Product Name</label>
                     <input 
@@ -43,18 +48,21 @@
                     id="productName" 
                     placeholder="Enter Product Name" 
                     value="{{product.productName}}">
+                    <small style="color: red">{{errorObject.productName}}</small>
                   </div>
+                  
                   {{!-- /form-group --}}
 
                   <div class="form-group">
                     <label for="productPrice">Product Price</label>
                     <input 
-                    type="text" 
+                    type="number" 
                     class="form-control" 
                     name="productPrice" 
                     id="productPrice" 
                     placeholder="Enter Price In Dollar"
                     value="{{product.productPrice}}">
+                    <small style="color: red">{{errorObject.productPrice}}</small>
                   </div>
                   {{!-- /form-group --}}
 
@@ -67,6 +75,7 @@
                     id="productQty" 
                     placeholder="Enter Product Qunitiy"
                     value="{{product.productQty}}">
+                    <small style="color: red">{{errorObject.productQty}}</small>
                   </div>
                   {{!-- /form-group --}}
 
@@ -77,6 +86,7 @@
                     id="productDescription" 
                     class="form-control"
                     >{{product.productDescription}}</textarea>
+                    <small style="color: red">{{errorObject.productDescription}}</small>
                   </div>
                   {{!-- /form-group --}}
 
@@ -98,6 +108,7 @@
                         {{/each}}
                       {{/if}}
                     </select>
+                    <small style="color: red">{{errorObject.category}}</small>
                   </div>
                   {{!-- /form-group --}}
 
@@ -132,8 +143,10 @@
                 <!-- /.card-body -->
 
                 <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">Create Product</button>
+                  <button type="submit" class="btn btn-primary">{{formTitle}}</button>
                 </div>
+
+                <input type="hidden" name="productId" value="{{product._id}}">
               </form>
             </div>
             <!-- /.card -->

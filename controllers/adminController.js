@@ -1,6 +1,8 @@
 const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
-
+const { findById } = require('../models/categoryModel');
+const { validationResult } = require('express-validator');
+const { getErrorsObject } = require('../functions');
 
 const dashboardController = (req, res) => {
     res.render('dashboard/index', { layout: 'admin' });
@@ -20,19 +22,17 @@ const getAddProductController = async (req, res) => {
 const getEditProductController = async (req, res) => {
     const categories = await Category.find();
     const product = await Product.findById(req.params.id);
-    console.log(product.toJSON());
-    //console.log(product);
     res.render('dashboard/product/add', { 
         layout: 'admin', 
         categories: categories.map(category => category.toJSON()),
         product: product.toJSON(),
+        errorObject: req.flash('errorObject')[0],
         formTitle: 'Edit Product'
     });
 }
 
 const postAddProductController = async (req, res) => {
     try {
-        console.log(req.files);
         const { 
             productName, 
             productPrice, 
@@ -41,6 +41,17 @@ const postAddProductController = async (req, res) => {
             category,
             productTags
         } = req.body
+        let { errors } = validationResult(req);
+        if(errors.length > 0) {
+            const categories = await Category.find();
+            console.log(errors);
+            return res.render('dashboard/product/add', { 
+                layout: 'admin', 
+                categories: categories.map(category => category.toJSON()),
+                formTitle: 'Add Product',
+                errorObject: getErrorsObject(errors) 
+            });
+        }
         const product = await Product.create({
             productName,
             productPrice,
@@ -50,12 +61,43 @@ const postAddProductController = async (req, res) => {
             productImages: req.files.map(file => file.filename),
             productTags: productTags.toLowerCase().replace(/, /g, ','),
         });
+        req.flash('success', 'Create Product Succssfuly ..');
         res.redirect('/admin-panel/product/show');
     } catch(error) {
         console.log(error);
     }
+}
 
+const putEditProductController = async (req, res) => {
+    try {
+        const { 
+            productName, 
+            productPrice, 
+            productQty, 
+            productDescription,
+            category,
+            productTags
+        } = req.body
+        let { errors } = validationResult(req);
+        if(errors.length > 0) {
+            req.flash('errorObject', getErrorsObject(errors));
+            res.redirect('/admin-panel/product/edit/' + req.body.productId);
+        }
+        const newData = {
+            productName,
+            productPrice,
+            productQty,
+            productDescription,
+            category,
+            productTags: productTags.toLowerCase().replace(/, /g, ',')
+        }
+        if(req.files.length > 0) newData.productImages = req.files.map(file => file.filename)
+        const product = await Product.findByIdAndUpdate(req.body.productId, newData);
+        req.flash('success', 'Modified Product Successfuly ..');
+        res.redirect('/admin-panel/product/show');
+    } catch(error) {
 
+    }
 }
 
 const showProductsController = async (req, res) => {
@@ -63,7 +105,8 @@ const showProductsController = async (req, res) => {
         const products = await Product.find();
         res.render('dashboard/product/show', { 
             layout: 'admin', 
-            products: products.map(product => product.toJSON())
+            products: products.map(product => product.toJSON()),
+            success: req.flash('success')[0],
         });
     } catch(error) {
         console.log(error);
@@ -114,5 +157,5 @@ module.exports = {
     getAddCategoryController,
     postAddCategoryController,
     showCategoriesController,
-    
+    putEditProductController
 }

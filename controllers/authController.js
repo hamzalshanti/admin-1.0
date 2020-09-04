@@ -1,6 +1,6 @@
 const User = require('../models/userModel');
 //const { signupValidation } = require('../validation');
-const { body, validationResult } = require('express-validator');
+const { validationResult } = require('express-validator');
 const { getErrorsObject, hashPassword } = require('../functions');
 
 const getLoginController = (req, res) => {
