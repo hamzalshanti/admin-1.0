@@ -15,6 +15,7 @@ const singupValidation = [
         })
 ]
 
+
 const productValidation = [
     body('productName').notEmpty().withMessage('name can not be empty'),
     body('productPrice').notEmpty().withMessage('price can not be empty').isNumeric().withMessage('price must be number'),

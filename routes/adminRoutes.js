@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const router = Router();
+const passport = require('passport');
 const {
     dashboardController,
     getAddProductController,
@@ -10,14 +11,33 @@ const {
     postAddCategoryController,
     showCategoriesController,
     getEditProductController,
-    putEditProductController
+    putEditProductController,
+    getAddUserController,
+    postAddUserController,
+    showUsersController
 } = require('../controllers/adminController');
 
 const uploader = require('../middlewares/multerMiddleware');
 const upload = uploader.array('productImage', 10);
-const { productValidation } = require('../validation');
+const { productValidation, singupValidation } = require('../validation');
+const { adminGuard, registerGuard } = require('../middlewares/authMiddleware');
 
 
+// Login
+router.get('/login', registerGuard, getLoginController);
+router.post('/login', registerGuard, passport.authenticate(
+    'admin-login', 
+    { 
+        successRedirect: '/admin-panel',
+        failureRedirect: '/admin-panel/login',
+        failureFlash: true,
+    }
+));
+
+
+
+
+router.use(adminGuard);
 
 router.get('/', dashboardController);
 
@@ -48,9 +68,10 @@ router.post('/category/add', postAddCategoryController);
 
 router.get('/category/show', showCategoriesController);
 
-// Login
-router.get('/login', getLoginController);
-
+// User 
+router.get('/user/show', showUsersController);
+router.get('/user/add', getAddUserController);
+router.post('/user/add', singupValidation, postAddUserController);
 
 
 module.exports = router;

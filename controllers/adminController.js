@@ -2,7 +2,8 @@ const Category = require('../models/categoryModel');
 const Product = require('../models/productModel');
 const { findById } = require('../models/categoryModel');
 const { validationResult } = require('express-validator');
-const { getErrorsObject } = require('../functions');
+const { getErrorsObject, hashPassword } = require('../functions');
+const User = require('../models/userModel');
 
 const dashboardController = (req, res) => {
     res.render('dashboard/index', { layout: 'admin' });
@@ -15,6 +16,8 @@ const getAddProductController = async (req, res) => {
     res.render('dashboard/product/add', { 
         layout: 'admin', 
         categories: categories.map(category => category.toJSON()),
+        product: req.flash('product')[0],
+        errorObject: req.flash('errorObject')[0],
         formTitle: 'Add Product'
     });
 }
@@ -27,7 +30,8 @@ const getEditProductController = async (req, res) => {
         categories: categories.map(category => category.toJSON()),
         product: product.toJSON(),
         errorObject: req.flash('errorObject')[0],
-        formTitle: 'Edit Product'
+        formTitle: 'Edit Product',
+        isEdit: true,
     });
 }
 
@@ -43,14 +47,16 @@ const postAddProductController = async (req, res) => {
         } = req.body
         let { errors } = validationResult(req);
         if(errors.length > 0) {
-            const categories = await Category.find();
-            console.log(errors);
-            return res.render('dashboard/product/add', { 
-                layout: 'admin', 
-                categories: categories.map(category => category.toJSON()),
-                formTitle: 'Add Product',
-                errorObject: getErrorsObject(errors) 
-            });
+            req.flash('errorObject', getErrorsObject(errors));
+            req.flash('product', {
+            productName, 
+            productPrice, 
+            productQty, 
+            productDescription,
+            category,
+            productTags
+            })
+            res.redirect('/admin-panel/product/add');
         }
         const product = await Product.create({
             productName,
@@ -143,7 +149,66 @@ const showCategoriesController = async (req, res) => {
 
 // Login
 const getLoginController = (req, res) => {
-    res.render('dashboard/login', { layout: false });
+    res.render('dashboard/login', { 
+        layout: false,
+        error:  req.flash('error')[0]
+     });
+}
+
+// Users
+
+const showUsersController = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.render('dashboard/user/show', { 
+            layout: 'admin', 
+            users: users.map(user => user.toJSON()),
+            success: req.flash('success')[0],
+        });
+    } catch(error) {
+        console.log(error);
+    }
+}
+
+const getAddUserController = (req, res) => {
+    console.log();
+    user = req.flash('user')[0],
+    errorObject = req.flash('errorObject')[0]
+    res.render('dashboard/user/add', 
+    {
+        layout: 'admin',
+        formTitle: 'Add User',
+        roles: [{ position: 'buyer' }, { position: 'admin' }],
+        user,
+        errorObject,
+    });
+}
+
+const postAddUserController = async (req, res) => {
+    try {
+        const { fullName, email, password, position } = req.body
+        let { errors } = validationResult(req);
+        if(errors.length > 0) {
+            req.flash('errorObject', getErrorsObject(errors));
+            req.flash('user', {
+                fullName, 
+                email, 
+                password, 
+                position
+            });
+            return res.redirect('/admin-panel/user/add');     
+        }
+        const user = await User.create({
+            fullName, 
+            email, 
+            password: await hashPassword(password), 
+            position
+        });
+        req.flash('success', 'Create User Succssfuly ..');
+        return res.redirect('/admin-panel/user/show');
+    } catch(errors) {
+        console.log(errors);
+    }
 }
 
 
@@ -157,5 +222,8 @@ module.exports = {
     getAddCategoryController,
     postAddCategoryController,
     showCategoriesController,
-    putEditProductController
+    putEditProductController,
+    getAddUserController,
+    postAddUserController,
+    showUsersController 
 }

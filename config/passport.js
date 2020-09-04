@@ -71,6 +71,27 @@ passport.use(new FacebookStrategy({
 ));
 
 
+// Local Admin
+passport.use('admin-login', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'password'
+}, async (email, password, done) => {
+    try {
+        const user = await User.findOne({ email });
+        if(!user) return done(null, false, 'wrong email or password');
+        if(user.position !== 'admin') return done(null, false, 'you ara not admin');
+        if(!user.password) return done(null, false, 'you ara not admin');
+        const isMatch = await bcrypt.compare(password, user.password);
+        if(!isMatch) return done(null, false, 'wrong email or password');
+        return done(null, user);
+    } catch (error){
+        return done(error);
+    }
+
+}));
+
+
+
 passport.serializeUser( (user, done) => done(null, user.id) );  
 passport.deserializeUser(function(id, done) {
     User.findById(id, function(err, user) {
