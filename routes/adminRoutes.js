@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 const passport = require('passport');
+const User = require('../models/userModel');
 const {
     dashboardController,
     getAddProductController,
@@ -14,13 +15,19 @@ const {
     putEditProductController,
     getAddUserController,
     postAddUserController,
-    showUsersController
+    showUsersController,
+    getEditUserController,
+    putEditUserController,
+    getEditCategoryController,
+    putEditCategoryController,
 } = require('../controllers/adminController');
 
 const uploader = require('../middlewares/multerMiddleware');
 const upload = uploader.array('productImage', 10);
-const { productValidation, singupValidation } = require('../validation');
+const { productValidation, singupValidation, categoryValidation } = require('../validation');
 const { adminGuard, registerGuard } = require('../middlewares/authMiddleware');
+const { editUser } = require('../middlewares/userMiddleware');
+
 
 
 // Login
@@ -63,15 +70,17 @@ router.put('/product/show', (req, res) => {
 
 // Category
 router.get('/category/add', getAddCategoryController);
-
-router.post('/category/add', postAddCategoryController);
-
+router.post('/category/add', categoryValidation, postAddCategoryController);
 router.get('/category/show', showCategoriesController);
+router.get('/category/eidt/:id', getEditCategoryController);
+router.put('/category/eidt', categoryValidation, putEditCategoryController);
 
 // User 
 router.get('/user/show', showUsersController);
 router.get('/user/add', getAddUserController);
 router.post('/user/add', singupValidation, postAddUserController);
+router.get('/user/edit/:id', getEditUserController);
+router.put('/user/edit', editUser, singupValidation, putEditUserController);
 
 
 module.exports = router;

@@ -7,7 +7,7 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1>Categories</h1>
+            <h1>Products</h1>
           </div>
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
@@ -16,8 +16,18 @@
             </ol>
           </div>
         </div>
+      {{#if success}}
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <strong>{{success}}</strong> 
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      {{/if}}
       </div><!-- /.container-fluid -->
     </section>
+
+
 
     <!-- Main content -->
     <section class="content">
@@ -44,7 +54,12 @@
                     <tr>
                       <td>{{categoryName}}</td>
                       <td>{{categoryDescription}}</td>
-                      <td>Delete</td>
+                      <td>
+                        <a href="/admin-panel/category/edit/{{_id}}" type="button" class="btn btn-info"><i class="fas fa-edit"></i></a>
+                        <form action="/admin-panel/category/show?_method=DELETE" method="POST" class="d-inline-block" id="myForm">
+                          <button type="submit" class="btn btn-danger" id="deleteBtn"><i class="fas fa-times"></i></button>
+                        </form>
+                      </td>
                     </tr>
                     {{/each}}
                   </tbody>
@@ -70,4 +85,17 @@
     <!-- /.content -->
   </div>
   <!-- /.content-wrapper -->
->
+<script>
+  var submitLink = document.getElementById('deleteBtn'),
+    myForm = document.getElementById('myForm');
+
+  submitLink.addEventListener('click', function(e) {
+      if (confirm('Are You Sure?')) {
+          myForm.submit();
+      }else{
+        e.preventDefault();
+      }
+  });
+</script>
+{{>admin/scripts}}
+{{>admin/tableScripts}}

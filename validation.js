@@ -15,7 +15,6 @@ const singupValidation = [
         })
 ]
 
-
 const productValidation = [
     body('productName').notEmpty().withMessage('name can not be empty'),
     body('productPrice').notEmpty().withMessage('price can not be empty').isNumeric().withMessage('price must be number'),
@@ -24,7 +23,13 @@ const productValidation = [
     body('category').notEmpty().withMessage('please select category')
 ]
 
+const categoryValidation = [
+    body('categoryName').notEmpty().withMessage('category name cannot be empty'),
+    body('categoryDescription').notEmpty().withMessage('category description cannot be empty'),
+]
+
 module.exports = {
     singupValidation,
-    productValidation
+    productValidation,
+    categoryValidation,
 }
