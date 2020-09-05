@@ -45,7 +45,7 @@
                     name="fullName" 
                     id="fullName" 
                     placeholder="Enter Full Name" 
-                    value="{{user.fullName}}">
+                    value="{{item.fullName}}">
                     <small style="color: red">{{errorObject.fullName}}</small>
                   </div>
                   
@@ -59,7 +59,7 @@
                     name="email" 
                     id="email" 
                     placeholder="email@example.com"
-                    value="{{user.email}}">
+                    value="{{item.email}}">
                     <small style="color: red">{{errorObject.email}}</small>
                   </div>
                   {{!-- /form-group --}}
@@ -93,16 +93,16 @@
                     <label for="position">Position</label>
                     <select name="position" id="position" class="form-control">
                       
-                      {{#if user}}
-                        {{#each roles}}
-                          {{#isEqual ../user.position position}}
+                      {{#if item}}
+                        {{#each arrayType}}
+                          {{#isEqual ../item.position position}}
                           <option value="{{position}}" selected>{{position}}</option>
                           {{else}}
                           <option value="{{position}}">{{position}}</option>
                           {{/isEqual}}
                         {{/each}}
                       {{else}}
-                        {{#each roles}}
+                        {{#each arrayType}}
                           <option value="{{position}}">{{position}}</option>
                         {{/each}}
                       {{/if}}
@@ -117,7 +117,7 @@
                   <button type="submit" class="btn btn-primary">{{formTitle}}</button>
                 </div>
 
-                <input type="hidden" name="userId" value="{{user._id}}">
+                <input type="hidden" name="itemId" value="{{item._id}}">
               </form>
             </div>
             <!-- /.card -->

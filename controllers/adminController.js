@@ -4,6 +4,7 @@ const { findById } = require('../models/categoryModel');
 const { validationResult } = require('express-validator');
 const { getErrorsObject, hashPassword } = require('../functions');
 const User = require('../models/userModel');
+const { post } = require('../routes/adminRoutes');
 
 const dashboardController = (req, res) => {
     res.render('dashboard/index', { layout: 'admin' });
@@ -13,97 +14,46 @@ const dashboardController = (req, res) => {
 // Product
 const getAddProductController = async (req, res) => {
     const categories = await Category.find();
-    res.render('dashboard/product/add', { 
-        layout: 'admin', 
-        categories: categories.map(category => category.toJSON()),
-        product: req.flash('product')[0],
-        errorObject: req.flash('errorObject')[0],
-        formTitle: 'Add Product'
-    });
+    await getAdd(req, res,'product', categories, {} , true);
 }
 
 const getEditProductController = async (req, res) => {
     const categories = await Category.find();
     const product = await Product.findById(req.params.id);
-    res.render('dashboard/product/add', { 
-        layout: 'admin', 
-        categories: categories.map(category => category.toJSON()),
-        product: product.toJSON(),
-        errorObject: req.flash('errorObject')[0],
-        formTitle: 'Edit Product',
-        isEdit: true,
-    });
+    await getAdd(req, res, 'product', categories, product, true, true);
 }
 
 const postAddProductController = async (req, res) => {
     try {
-        const { 
-            productName, 
-            productPrice, 
-            productQty, 
-            productDescription,
-            category,
-            productTags
-        } = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            req.flash('errorObject', getErrorsObject(errors));
-            req.flash('product', {
-            productName, 
-            productPrice, 
-            productQty, 
-            productDescription,
-            category,
-            productTags
-            })
-            res.redirect('/admin-panel/product/add');
+        const fields = { 
+            productName: req.body.productName, 
+            productPrice: req.body.productPrice, 
+            productQty: req.body.productQty, 
+            productDescription: req.body.productDescription,
+            category: req.body.category,
+            productTags: req.body.productTags
         }
-        const product = await Product.create({
-            productName,
-            productPrice,
-            productQty,
-            productDescription,
-            category,
-            productImages: req.files.map(file => file.filename),
-            productTags: productTags.toLowerCase().replace(/, /g, ','),
-        });
-        req.flash('success', 'Create Product Succssfuly ..');
-        res.redirect('/admin-panel/product/show');
+        await postAdd(req, res, 'product', fields);
     } catch(error) {
-        console.log(error);
+
     }
 }
 
 const putEditProductController = async (req, res) => {
     try {
-        const { 
-            productName, 
-            productPrice, 
-            productQty, 
-            productDescription,
-            category,
-            productTags
-        } = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            req.flash('errorObject', getErrorsObject(errors));
-            res.redirect('/admin-panel/product/edit/' + req.body.productId);
-        }
-        const newData = {
-            productName,
-            productPrice,
-            productQty,
-            productDescription,
-            category,
-            productTags: productTags.toLowerCase().replace(/, /g, ',')
-        }
-        if(req.files.length > 0) newData.productImages = req.files.map(file => file.filename)
-        const product = await Product.findByIdAndUpdate(req.body.productId, newData);
-        req.flash('success', 'Modified Product Successfuly ..');
-        res.redirect('/admin-panel/product/show');
-    } catch(error) {
+        const fields = { 
+            productName: req.body.productName, 
+            productPrice: req.body.productPrice, 
+            productQty: req.body.productQty,
+            productDescription: req.body.productDescription,
+            category: req.body.category,
+            productTags: req.body.productTags
+        } 
+        await postAdd(req, res, 'product', fields, 'edit');
+    }catch(error) {
 
     }
+
 }
 
 const showProductsController = async (req, res) => {
@@ -121,27 +71,17 @@ const showProductsController = async (req, res) => {
 //End Product
 
 // Category
-const getAddCategoryController = (req, res) => {
-    res.render('dashboard/category/add', { 
-        layout: 'admin', 
-        category: req.flash('category')[0],
-        errorObject: req.flash('errorObject')[0],
-        formTitle: 'Add Category'
-    });
+const getAddCategoryController = async (req, res) => {
+    await getAdd(req, res, 'category');
 }
 
 const postAddCategoryController = async (req, res) => {
     try{
-        const { categoryName, categoryDescription } = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            req.flash('errorObject', getErrorsObject(errors));
-            req.flash('category', { categoryName, categoryDescription });
-            res.redirect('/admin-panel/category/add');
+        const fields = { 
+            categoryName: req.body.categoryName, 
+            categoryDescription: req.body.categoryDescription 
         }
-        const product = await Product.create({ categoryName, categoryDescription });
-        req.flash('success', 'Create Category Succssfuly ..');
-        res.redirect('/admin-panel/category/show');
+        postAdd(req, res, 'category', fields);
     } catch(error) {
         console.log(error);
     }
@@ -152,7 +92,8 @@ const showCategoriesController = async (req, res) => {
         const categories = await Category.find();
         res.render('dashboard/category/show', { 
             layout: 'admin', 
-            categories: categories.map(category => category.toJSON())
+            categories: categories.map(category => category.toJSON()),
+            success: req.flash('success')[0],
         });
     } catch(error) {
         console.log(error);
@@ -161,33 +102,20 @@ const showCategoriesController = async (req, res) => {
 
 const getEditCategoryController = async (req, res) => {
     const category = await Category.findById(req.params.id);
-    res.render('dashboard/category/add', { 
-        layout: 'admin', 
-        category: category.toJSON(),
-        errorObject: req.flash('errorObject')[0],
-        formTitle: 'Edit Category',
-        isEdit: true,
-    });
+    await getAdd(req, res, 'category', [], category, true, true);
 }
 
 const putEditCategoryController = async (req, res) => {
     try {
-        const { categoryName, categoryDescription} = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            req.flash('errorObject', getErrorsObject(errors));
-            res.redirect('/admin-panel/category/edit/' + req.body.categoryId);
+        const fields = { 
+            categoryName: req.body.categoryName, 
+            categoryDescription: req.body.categoryDescription 
         }
-        newData = {
-            categoryName,
-            categoryDescription
-        }
-        const category = await Product.findByIdAndUpdate(req.body.categoryId, newData);
-        req.flash('success', 'Modified Product Successfuly ..');
-        res.redirect('/admin-panel/category/show');
+        await postAdd(req, res, 'category', fields, 'edit');
     } catch(error) {
 
-    }
+    } 
+
 }
 
 // Login
@@ -214,41 +142,19 @@ const showUsersController = async (req, res) => {
     }
 }
 
-const getAddUserController = (req, res) => {
-    console.log();
-    user = req.flash('user')[0],
-    errorObject = req.flash('errorObject')[0]
-    res.render('dashboard/user/add', 
-    {
-        layout: 'admin',
-        formTitle: 'Add User',
-        roles: [{ position: 'buyer' }, { position: 'admin' }],
-        user,
-        errorObject,
-    });
+const getAddUserController = async (req, res) => {
+    const roles = [{ position: 'buyer' }, { position: 'admin' }];
+    await getAdd(req, res, 'user', roles);
 }
 const postAddUserController = async (req, res) => {
     try {
-        const { fullName, email, password, position } = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            req.flash('errorObject', getErrorsObject(errors));
-            req.flash('user', {
-                fullName, 
-                email, 
-                password, 
-                position
-            });
-            return res.redirect('/admin-panel/user/add');     
+        const fields = { 
+            fullName: req.body.fullName, 
+            email: req.body.email, 
+            password: req.body.password, 
+            position: req.body.position 
         }
-        const user = await User.create({
-            fullName, 
-            email, 
-            password: await hashPassword(password), 
-            position
-        });
-        req.flash('success', 'Create User Succssfuly ..');
-        return res.redirect('/admin-panel/user/show');
+        await postAdd(req, res, 'user', fields);
     } catch(errors) {
         console.log(errors);
     }
@@ -257,47 +163,91 @@ const postAddUserController = async (req, res) => {
 const getEditUserController = async (req, res) => {
     const roles = [{ position: 'buyer' }, { position: 'admin' }]
     const user = await User.findById(req.params.id);
-    res.render('dashboard/user/add', { 
-        layout: 'admin', 
-        roles,
-        user: user.toJSON(),
-        errorObject: req.flash('errorObject')[0],
-        formTitle: 'Edit user',
-        isEdit: true,
-    });
+    await getAdd(req, res, 'user', roles, user, false, true);
 }
 
 const putEditUserController = async (req, res) => {
     try {
-        const { 
-            fullName,
-            email,
-            password,
-            position
-        } = req.body
-        let { errors } = validationResult(req);
-        if(errors.length > 0) {
-            console.log(errors);
-            errors.map(error => {
-                if(error.msg === 'email already exist');
-            })
-            req.flash('errorObject', getErrorsObject(errors));
-            res.redirect('/admin-panel/user/edit/' + req.body.userId);
+        const fields = { 
+            fullName: req.body.fullName,
+            email: req.body.email,
+            password: req.body.password,
+            position: req.body.position
         }
-        const newData = {
-            fullName,
-            position
-        }
-        if(password !== 'stillPass') newData.password = password;
-        if(email !== 'email@example.ha') newData.email = email;
-        const user = await User.findByIdAndUpdate(req.body.userId, newData);
-        req.flash('success', 'Modified User Successfuly ..');
-        res.redirect('/admin-panel/user/show');
+        await postAdd(req, res, 'user', fields, 'edit');
     } catch(error) {
 
     }
 }
 
+async function getAdd(req, res, type, arrayToSelect = [], item = {}, convertToJSON = false, isEdit = false) {
+    try {
+        const args = { 
+            layout: 'admin', 
+            [type]: req.flash(`${type}`)[0],
+            errorObject: req.flash('errorObject')[0],
+            arrayType: arrayToSelect,
+            formTitle: `Add ${type}`
+        }
+        if(arrayToSelect.length > 0  && convertToJSON) args.arrayType = arrayToSelect.map(arr => arr.toJSON());
+        if(!isEdit) return res.render(`dashboard/${type}/add`, args);
+        args.item = item.toJSON();
+        args.formTitle = `Edit ${type}`;
+        args.isEdit = true;
+        return res.render(`dashboard/${type}/add`, args);
+    } catch(error) {
+        console.log(error.message);
+    }
+}
+
+
+async function postAdd(req, res, type, fields, command) {
+    try {
+        let { errors } = validationResult(req);
+        if(errors.length > 0) {
+            req.flash('errorObject', getErrorsObject(errors));
+            req.flash(type, fields);
+            if(command === 'edit') return res.redirect(`/admin-panel/${type}/${command}/${req.body.itemId}`);
+            res.redirect(`/admin-panel/${type}/add`);
+        }
+        if(type === 'product') {
+            if(req.files.length > 0) fields.productImages = req.files.map(file => file.filename);
+            fields.productTags = fields.productTags.toLowerCase().replace(/, /g, ',');
+            if(command === 'edit') 
+                await Product.findByIdAndUpdate(req.body.itemId, fields);
+            else
+                await Product.create(fields);
+        }
+        //product
+
+        if(type === 'user') {
+            if(fields.password === 'stillPass') delete fields.password;
+            if(fields.email === 'email@example.ha') delete fields.email;
+            if(fields.password)
+            fields.password = await hashPassword(fields.password);
+            if(command === 'edit')
+                await User.findByIdAndUpdate(req.body.itemId, fields);
+            else
+                await User.create(fields);
+        }
+        // user
+
+        if(type === 'category') {
+            if(command === 'edit')
+                await Category.create(fields);
+            else 
+                await Category.findByIdAndUpdate(req.body.itemId, fields);
+        }
+        if(command === 'edit')
+            req.flash('success', `Modified ${type} Successfuly ..`);
+        else
+            req.flash('success', `Create ${type} Succssfuly ..`);
+
+        res.redirect(`/admin-panel/${type}/show`);
+    } catch(error) {
+        console.log(error);
+    }
+}
 
 module.exports = {
     dashboardController,

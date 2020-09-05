@@ -47,7 +47,7 @@
                     name="productName" 
                     id="productName" 
                     placeholder="Enter Product Name" 
-                    value="{{product.productName}}">
+                    value="{{item.productName}}">
                     <small style="color: red">{{errorObject.productName}}</small>
                   </div>
                   
@@ -61,7 +61,7 @@
                     name="productPrice" 
                     id="productPrice" 
                     placeholder="Enter Price In Dollar"
-                    value="{{product.productPrice}}">
+                    value="{{item.productPrice}}">
                     <small style="color: red">{{errorObject.productPrice}}</small>
                   </div>
                   {{!-- /form-group --}}
@@ -74,7 +74,7 @@
                     name="productQty" 
                     id="productQty" 
                     placeholder="Enter Product Qunitiy"
-                    value="{{product.productQty}}">
+                    value="{{item.productQty}}">
                     <small style="color: red">{{errorObject.productQty}}</small>
                   </div>
                   {{!-- /form-group --}}
@@ -85,7 +85,7 @@
                     name="productDescription" 
                     id="productDescription" 
                     class="form-control"
-                    >{{product.productDescription}}</textarea>
+                    >{{item.productDescription}}</textarea>
                     <small style="color: red">{{errorObject.productDescription}}</small>
                   </div>
                   {{!-- /form-group --}}
@@ -94,16 +94,16 @@
                     <label for="category">Select Category</label>
                     <select name="category" id="category" class="form-control">
                       <option value="-1" selected>uncategorized</option>
-                      {{#if product}}
-                        {{#each categories}}
-                          {{#isEqual ../product.category _id}}
+                      {{#if item}}
+                        {{#each arrayType}}
+                          {{#isEqual ../item.category _id}}
                           <option value="{{_id}}" selected>{{categoryName}}</option>
                           {{else}}
                           <option value="{{_id}}">{{categoryName}}</option>
                           {{/isEqual}}
                         {{/each}}
                       {{else}}
-                        {{#each categories}}
+                        {{#each arrayType}}
                           <option value="{{_id}}">{{categoryName}}</option>
                         {{/each}}
                       {{/if}}
@@ -134,7 +134,7 @@
                     id="productTags"
                     class="form-control"
                     placeholder="Example: Nice, KORA, Discount, etc .." 
-                    value="{{product.productTags}}">
+                    value="{{item.productTags}}">
                   </div>
                   {{!-- /form-group --}}
 
@@ -146,7 +146,7 @@
                   <button type="submit" class="btn btn-primary">{{formTitle}}</button>
                 </div>
 
-                <input type="hidden" name="productId" value="{{product._id}}">
+                <input type="hidden" name="itemId" value="{{item._id}}">
               </form>
             </div>
             <!-- /.card -->

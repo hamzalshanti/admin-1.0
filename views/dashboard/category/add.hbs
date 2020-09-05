@@ -45,7 +45,7 @@
                     name="categoryName" 
                     id="categoryName" 
                     placeholder="Enter Category Name"
-                    value="{{category.categoryName}}">
+                    value="{{item.categoryName}}">
                   </div>
                   {{!-- /form-group --}}
 
@@ -55,7 +55,7 @@
                     <textarea 
                     name="categoryDescription" 
                     id="categoryDescription" 
-                    class="form-control">{{category.categoryDescription}}
+                    class="form-control">{{item.categoryDescription}}
                     </textarea>
                   </div>
                   {{!-- /form-group --}}
@@ -65,7 +65,7 @@
                 <div class="card-footer">
                   <button type="submit" class="btn btn-primary">{{formTitle}}</button>
                 </div>
-                <input type="hidden" name="categoryId" value="{{_id}}">
+                <input type="hidden" name="itemId" value="{{item._id}}">
               </form>
             </div>
             <!-- /.card -->

@@ -72,8 +72,8 @@ router.put('/product/show', (req, res) => {
 router.get('/category/add', getAddCategoryController);
 router.post('/category/add', categoryValidation, postAddCategoryController);
 router.get('/category/show', showCategoriesController);
-router.get('/category/eidt/:id', getEditCategoryController);
-router.put('/category/eidt', categoryValidation, putEditCategoryController);
+router.get('/category/edit/:id', getEditCategoryController);
+router.put('/category/edit', categoryValidation, putEditCategoryController);
 
 // User 
 router.get('/user/show', showUsersController);
