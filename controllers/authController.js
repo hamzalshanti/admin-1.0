@@ -1,7 +1,6 @@
 const User = require('../models/userModel');
-//const { signupValidation } = require('../validation');
 const { validationResult } = require('express-validator');
-const { getErrorsObject, hashPassword } = require('../functions');
+const { getErrorsObject, hashPassword } = require('../functions/authFn');
 
 const getLoginController = (req, res) => {
     res.render('login', { layout: false, title: 'Login', success: req.flash('success'), error: req.flash('error')[0] });

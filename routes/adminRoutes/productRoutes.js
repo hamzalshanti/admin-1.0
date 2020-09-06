@@ -7,7 +7,7 @@ const {
     get_edit_product,
     put_edit_product,
     delete_product
-} = require('../../controllers/adminController');
+} = require('../../controllers/adminControllers/productController');
 
 const uploader = require('../../middlewares/multerMiddleware');
 const upload = uploader.array('productImage', 10);

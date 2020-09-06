@@ -7,7 +7,7 @@ const {
     get_edit_category,
     put_edit_category,
     delete_category
-} = require('../../controllers/adminController');
+} = require('../../controllers/adminControllers/categoryController');
 
 const { categoryValidation } = require('../../validation');
 

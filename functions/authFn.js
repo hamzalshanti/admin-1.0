@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+
 const getErrorsObject = (errors) => {
     const errorObject = {};
     errors.forEach(error => {

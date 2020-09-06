@@ -7,7 +7,7 @@ const {
     get_edit_user,
     put_edit_user,
     delete_user
-} = require('../../controllers/adminController');
+} = require('../../controllers/adminControllers/userController');
 
 const { singupValidation } = require('../../validation');
 const { editUser } = require('../../middlewares/userMiddleware');
