@@ -45,10 +45,10 @@
                     name="fullName" 
                     id="fullName" 
                     placeholder="Enter Full Name" 
-                    value="{{item.fullName}}">
+                    value="{{item.fullName}}"
+                    >
                     <small style="color: red">{{errorObject.fullName}}</small>
                   </div>
-                  
                   {{!-- /form-group --}}
 
                   <div class="form-group">
@@ -59,11 +59,19 @@
                     name="email" 
                     id="email" 
                     placeholder="email@example.com"
-                    value="{{item.email}}">
+                    value="{{item.email}}"
+                    {{#if isNormalRegister}}
+
+                    {{else}}
+                      disabled
+                    {{/if}}
+                    >
                     <small style="color: red">{{errorObject.email}}</small>
                   </div>
                   {{!-- /form-group --}}
+                  
 
+                  {{#if isNormalRegister}}
                   <div class="form-group">
                     <label for="password">Password</label>
                     <input 
@@ -88,6 +96,7 @@
                     <small style="color: red">{{errorObject.confirmPassword}}</small>
                   </div>
                   {{!-- /form-group --}}
+                  {{/if}}
 
                   <div class="form-group">
                     <label for="position">Position</label>

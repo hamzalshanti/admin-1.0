@@ -20,6 +20,9 @@ const {
     putEditUserController,
     getEditCategoryController,
     putEditCategoryController,
+    deleteProductController,
+    deleteCategoryController,
+    deleteUserController,
 } = require('../controllers/adminController');
 
 const uploader = require('../middlewares/multerMiddleware');
@@ -60,13 +63,10 @@ router.put('/product/edit', upload, productValidation, putEditProductController)
 
 router.get('/product/show', showProductsController);
 
-router.delete('/product/show', (req, res) => {
-    res.send('Delete');
-});
+router.delete('/category/show', deleteCategoryController);
 
-router.put('/product/show', (req, res) => {
-    res.send('Edit');
-});
+router.delete('/product/show', deleteProductController);
+
 
 // Category
 router.get('/category/add', getAddCategoryController);
@@ -81,6 +81,7 @@ router.get('/user/add', getAddUserController);
 router.post('/user/add', singupValidation, postAddUserController);
 router.get('/user/edit/:id', getEditUserController);
 router.put('/user/edit', editUser, singupValidation, putEditUserController);
+router.delete('/user/show', deleteUserController);
 
 
 module.exports = router;

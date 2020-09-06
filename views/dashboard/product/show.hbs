@@ -59,6 +59,7 @@
                       <td>
                         <a href="/admin-panel/product/edit/{{_id}}" type="button" class="btn btn-info"><i class="fas fa-edit"></i></a>
                         <form action="/admin-panel/product/show?_method=DELETE" method="POST" class="d-inline-block" id="myForm">
+                          <input type="hidden" name="id" value="{{_id}}">
                           <button type="submit" class="btn btn-danger" id="deleteBtn"><i class="fas fa-times"></i></button>
                         </form>
                       </td>

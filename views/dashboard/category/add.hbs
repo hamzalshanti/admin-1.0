@@ -46,6 +46,7 @@
                     id="categoryName" 
                     placeholder="Enter Category Name"
                     value="{{item.categoryName}}">
+                    <small style="color: red">{{errorObject.categoryName}}</small>
                   </div>
                   {{!-- /form-group --}}
 
@@ -53,10 +54,10 @@
                   <div class="form-group">
                     <label for="categoryDescription">Category Description</label>
                     <textarea 
-                    name="categoryDescription" 
+                    name="categoryDescription"
                     id="categoryDescription" 
-                    class="form-control">{{item.categoryDescription}}
-                    </textarea>
+                    class="form-control">{{item.categoryDescription}}</textarea>
+                    <small style="color: red">{{errorObject.categoryDescription}}</small>
                   </div>
                   {{!-- /form-group --}}
 
