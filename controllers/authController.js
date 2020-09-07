@@ -1,29 +1,54 @@
 const User = require('../models/userModel');
-const { validationResult } = require('express-validator');
-const { getErrorsObject, hashPassword } = require('../functions/authFn');
+const {
+    validationResult
+} = require('express-validator');
+const {
+    getErrorsObject,
+    hashPassword
+} = require('../functions/authFn');
 
 const getLoginController = (req, res) => {
-    res.render('login', { layout: false, title: 'Login', success: req.flash('success'), error: req.flash('error')[0] });
+    res.render('matjri/login', {
+        layout: false,
+        title: 'Login',
+        success: req.flash('success'),
+        error: req.flash('error')[0]
+    });
 }
 
 const getSignupController = (req, res) => {
-    res.render('signup', { layout: false, title: 'Singup' });
+    res.render('matjri/signup', {
+        layout: false,
+        title: 'Singup'
+    });
 }
 
 const postSignupController = async (req, res) => {
     try {
-        const { fullName, email, password, confirmPassword } = req.body;
-        let { errors } = validationResult(req);
-        if(errors.length > 0) return res.render('signup', { 
-            layout: false, 
-            title: 'Singup', 
-            fullName, email, 
-            errorObject: getErrorsObject(errors) 
+        const {
+            fullName,
+            email,
+            password,
+            confirmPassword
+        } = req.body;
+        let {
+            errors
+        } = validationResult(req);
+        if (errors.length > 0) return res.render('matjri/signup', {
+            layout: false,
+            title: 'Singup',
+            fullName,
+            email,
+            errorObject: getErrorsObject(errors)
         });
-        const user = await User.create({ fullName, email, password: await hashPassword(password) });
+        const user = await User.create({
+            fullName,
+            email,
+            password: await hashPassword(password)
+        });
         req.flash('success', 'created done you can login now');
         res.redirect('/auth/login');
-    } catch(error) {
+    } catch (error) {
         console.log(error);
     }
 }

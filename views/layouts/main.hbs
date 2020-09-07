@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>dreamProject | {{title}} </title>
+    <title>{{title}}</title>
+    {{>matjri/styles}}
 </head>
+
 <body>
-    {{>header}}
+    {{>matjri/header}}
     {{{body}}}
-    {{>scripts}}
+    {{>matjri/footer}}
+    {{>matjri/scripts}}
 </body>
+
 </html>
