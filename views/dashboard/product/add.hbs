@@ -1,165 +1,155 @@
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Product</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">General Form</li>
-            </ol>
-          </div>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Product</h1>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">General Form</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
 
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{formTitle}}</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form 
-              {{#if isEdit}} 
-              action="/admin-panel/product/edit?_method=PUT"
-              {{/if}}
-              method="post" 
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">{{formTitle}}</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form {{#if isEdit}} action="/admin-panel/product/edit?_method=PUT" {{/if}} method="post"
               enctype="multipart/form-data">
-                <div class="card-body">
-            
-                  <div class="form-group">
-                    <label for="productName">Product Name</label>
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    name="productName" 
-                    id="productName" 
-                    placeholder="Enter Product Name" 
-                    value="{{item.productName}}">
-                    <small style="color: red">{{errorObject.productName}}</small>
-                  </div>
-                  
-                  {{!-- /form-group --}}
+              <div class="card-body">
 
-                  <div class="form-group">
-                    <label for="productPrice">Product Price</label>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    name="productPrice" 
-                    id="productPrice" 
-                    placeholder="Enter Price In Dollar"
-                    value="{{item.productPrice}}">
-                    <small style="color: red">{{errorObject.productPrice}}</small>
-                  </div>
-                  {{!-- /form-group --}}
+                <div class="form-group">
+                  <label for="productName">Product Name</label>
+                  <input type="text" class="form-control" name="productName" id="productName"
+                    placeholder="Enter Product Name" value="{{item.productName}}">
+                  <small style="color: red">{{errorObject.productName}}</small>
+                </div>
 
-                  <div class="form-group">
-                    <label for="productQty">Product Quntity</label>
-                    <input 
-                    type="number" 
-                    class="form-control" 
-                    name="productQty" 
-                    id="productQty" 
-                    placeholder="Enter Product Qunitiy"
-                    value="{{item.productQty}}">
-                    <small style="color: red">{{errorObject.productQty}}</small>
-                  </div>
-                  {{!-- /form-group --}}
+                {{!-- /form-group --}}
 
-                  <div class="form-group">
-                    <label for="productDescription">Product Description</label>
-                    <textarea 
-                    name="productDescription" 
-                    id="productDescription" 
-                    class="form-control"
-                    >{{item.productDescription}}</textarea>
-                    <small style="color: red">{{errorObject.productDescription}}</small>
-                  </div>
-                  {{!-- /form-group --}}
+                <div class="form-group">
+                  <label for="productPrice">Price</label>
+                  <input type="text" class="form-control" name="productPrice" id="productPrice"
+                    placeholder="Enter Price In Dollar" value="{{item.productPrice}}">
+                  <small style="color: red">{{errorObject.productPrice}}</small>
+                </div>
+                {{!-- /form-group --}}
 
-                  <div class="form-group">
-                    <label for="category">Select Category</label>
-                    <select name="category" id="category" class="form-control">
-                      <option value="5f3914ffee318a20ac5eec3b" selected>uncategorized</option>
-                      {{#if item}}
-                        {{#each arrayType}}
-                          {{#isEqual ../item.category _id}}
-                          <option value="{{_id}}" selected>{{categoryName}}</option>
-                          {{else}}
-                          <option value="{{_id}}">{{categoryName}}</option>
-                          {{/isEqual}}
-                        {{/each}}
-                      {{else}}
-                        {{#each arrayType}}
-                          <option value="{{_id}}">{{categoryName}}</option>
-                        {{/each}}
-                      {{/if}}
-                    </select>
-                    <small style="color: red">{{errorObject.category}}</small>
-                  </div>
-                  {{!-- /form-group --}}
 
-                  <div class="form-group">
-                    <label for="exampleInputFile">Product Main Image</label>
-                    <div class="input-group">
-                      <div class="custom-file">
-                        <input type="file" name="productImage" class="form-control" id="exampleInputFile" multiple>
-                        {{!-- <label class="custom-file-label" for="exampleInputFile">Choose Image</label> --}}
-                      </div>
-                      {{!-- <div class="input-group-append">
-                        <span class="input-group-text" id="">Upload</span>
-                      </div> --}}
+                <div class="form-group">
+                  <label for="discount">disount</label>
+                  <input type="text" class="form-control" name="discount" id="discount" placeholder="%"
+                    value="{{item.discount}}">
+                  <small style="color: red">{{errorObject.discount}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="productQty">Product Quntity</label>
+                  <input type="text" class="form-control" name="productQty" id="productQty"
+                    placeholder="Enter Product Qunitiy" value="{{item.productQty}}">
+                  <small style="color: red">{{errorObject.productQty}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="productDescription">Product Description</label>
+                  <textarea name="productDescription" id="productDescription"
+                    class="form-control">{{item.productDescription}}</textarea>
+                  <small style="color: red">{{errorObject.productDescription}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="category">Select Category</label>
+                  <select name="category" id="category" class="form-control">
+                    <option value="5f3914ffee318a20ac5eec3b" selected>uncategorized</option>
+                    {{#if item}}
+                    {{#each arrayType}}
+                    {{#isEqual ../item.category _id}}
+                    <option value="{{_id}}" selected>{{categoryName}}</option>
+                    {{else}}
+                    <option value="{{_id}}">{{categoryName}}</option>
+                    {{/isEqual}}
+                    {{/each}}
+                    {{else}}
+                    {{#each arrayType}}
+                    <option value="{{_id}}">{{categoryName}}</option>
+                    {{/each}}
+                    {{/if}}
+                  </select>
+                  <small style="color: red">{{errorObject.category}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="mainImage">Main Image</label>
+                  <div class="input-group">
+                    <div class="custom-file">
+                      <input type="file" name="mainImage" class="form-control" id="mainImage">
                     </div>
                   </div>
-                  {{!-- /form-group --}}
+                </div>
+                {{!-- /form-group --}}
 
-                  <div class="form-group">
-                    <label for="productTags">Product Tags</label>
-                    <input 
-                    type="text"
-                    name="productTags" 
-                    id="productTags"
-                    class="form-control"
-                    placeholder="Example: Nice, KORA, Discount, etc .." 
-                    value="{{item.productTags}}">
+                <div class="form-group">
+                  <label for="exampleInputFile">Product Gallary</label>
+                  <div class="input-group">
+                    <div class="custom-file">
+                      <input type="file" name="productGallary" class="form-control" id="exampleInputFile" multiple>
+                      {{!-- <label class="custom-file-label" for="exampleInputFile">Choose Image</label> --}}
+                    </div>
+                    {{!-- <div class="input-group-append">
+                        <span class="input-group-text" id="">Upload</span>
+                      </div> --}}
                   </div>
-                  {{!-- /form-group --}}
-
-
                 </div>
-                <!-- /.card-body -->
+                {{!-- /form-group --}}
 
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">{{formTitle}}</button>
+                <div class="form-group">
+                  <label for="productTags">Product Tags</label>
+                  <input type="text" name="productTags" id="productTags" class="form-control"
+                    placeholder="Example: Nice, KORA, Discount, etc .." value="{{item.productTags}}">
                 </div>
-
-                <input type="hidden" name="itemId" value="{{item._id}}">
-              </form>
-            </div>
-            <!-- /.card -->
+                {{!-- /form-group --}}
 
 
+              </div>
+              <!-- /.card-body -->
+
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">{{formTitle}}</button>
+              </div>
+
+              <input type="hidden" name="itemId" value="{{item._id}}">
+            </form>
           </div>
-          <!--/.col -->
-        </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  {{>admin/scripts}}
+          <!-- /.card -->
 
+
+        </div>
+        <!--/.col -->
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{{>admin/scripts}}

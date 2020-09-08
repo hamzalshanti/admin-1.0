@@ -1,18 +1,14 @@
-const {
-    Router
-} = require('express');
+const { Router } = require('express');
 const router = Router();
 const {
-    get_index,
-    get_cart,
-    get_shop,
-    get_single_product,
-    get_checkout,
-    get_order
+  get_index,
+  get_cart,
+  get_shop,
+  get_single_product,
+  get_checkout,
+  get_order,
 } = require('../controllers/indexController');
-const {
-    siteGuard
-} = require('../middlewares/authMiddleware');
+const { siteGuard } = require('../middlewares/authMiddleware');
 
 // @GET     @desc: show index page
 router.get('/', siteGuard, get_index);
@@ -21,6 +17,5 @@ router.get('/shop', siteGuard, get_shop);
 router.get('/single-product', siteGuard, get_single_product);
 router.get('/checkout', siteGuard, get_checkout);
 router.get('/order', siteGuard, get_order);
-
 
 module.exports = router;

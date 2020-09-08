@@ -19,6 +19,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^6.6.1",
     "joi": "^17.2.1",
+    "lodash": "^4.17.20",
     "method-override": "^3.0.0",
     "mongoose": "^5.10.2",
     "morgan": "^1.10.0",
@@ -26,6 +27,17 @@
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "slugify": "^1.4.5"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-config-node": "^4.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.1"
   }
 }
