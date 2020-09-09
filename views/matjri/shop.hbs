@@ -22,7 +22,7 @@
                     <div class="product-upper">
                         <img src="/products/{{mainImage}}" alt="">
                     </div>
-                    <h2><a href="">{{productName}}</a></h2>
+                    <h2><a href="/single-product/{{_id}}">{{productName}}</a></h2>
                     <div class="product-carousel-price">
                         <ins>${{discount productPrice discount}}</ins> <del>${{productPrice}}</del>
                     </div>
@@ -46,11 +46,7 @@
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                            <li><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#">4</a></li>
-                            <li><a href="#">5</a></li>
+
                             <li>
                                 <a href="#" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
@@ -63,3 +59,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    const totalPages = {{ totalPages }},
+    currnetPage = {{ page }};
+    for (let i = 0; i < totalPages; ++i) {
+        const list = document.createElement('li'),
+            link = document.createElement('a');
+        link.setAttribute('href', `?page=${i + 1}`);
+        link.textContent = i + 1;
+        list.appendChild(link);
+        document.querySelector('.pagination').appendChild(list);
+    }
+</script>

@@ -14,7 +14,7 @@ const { siteGuard } = require('../middlewares/authMiddleware');
 router.get('/', siteGuard, get_index);
 router.get('/cart', siteGuard, get_cart);
 router.get('/shop', siteGuard, get_shop);
-router.get('/single-product', siteGuard, get_single_product);
+router.get('/single-product/:id', siteGuard, get_single_product);
 router.get('/checkout', siteGuard, get_checkout);
 router.get('/order', siteGuard, get_order);
 

@@ -3,6 +3,7 @@ const router = Router({ mergeParams: true });
 const productRoutes = require('./productRoutes');
 const categoryRoutes = require('./categoryRoutes');
 const userRoutes = require('./userRoutes');
+const tagRoutes = require('./tagRoutes');
 const passport = require('passport');
 const {
   show_dashboard,
@@ -32,5 +33,6 @@ router.get('/', show_dashboard);
 router.use('/product', productRoutes);
 router.use('/category', categoryRoutes);
 router.use('/user', userRoutes);
+router.use('/tag', tagRoutes);
 
 module.exports = router;

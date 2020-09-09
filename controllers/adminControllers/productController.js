@@ -68,6 +68,7 @@ const get_edit_product = async (req, res) => {
  * @param {object} res - reponse object
  */
 const post_add_product = async (req, res) => {
+  console.log(req.body);
   const fields = {
     productName: req.body.productName,
     productPrice: req.body.productPrice,
@@ -75,7 +76,6 @@ const post_add_product = async (req, res) => {
     productDescription: req.body.productDescription,
     category: req.body.category,
     discount: req.body.discount,
-    productTags: req.body.productTags,
   };
   add_product({ req, res, type, fields });
 };
@@ -95,7 +95,7 @@ const put_edit_product = async (req, res) => {
     productDescription: req.body.productDescription,
     category: req.body.category,
     discount: req.body.discount,
-    productTags: req.body.productTags,
+    tags: req.body.tags,
   };
   await edit_product({ req, res, type, fields });
 };

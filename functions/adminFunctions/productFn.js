@@ -8,6 +8,7 @@ const {
   check_edit_errors,
 } = require('./commonFn');
 const Product = require('../../models/productModel');
+const Tag = require('../../models/tagModel');
 const _ = require('lodash');
 
 /**
@@ -27,9 +28,18 @@ function display_add_product_page({ req, res, type, page, arrayType }) {
 }
 
 // Display Edit Product Page
-function display_edit_product_page({ req, res, type, item, page, arrayType }) {
+async function display_edit_product_page({
+  req,
+  res,
+  type,
+  item,
+  page,
+  arrayType,
+}) {
   const args = set_render_args({ req, type, page, arrayType });
   args.isEdit = true;
+  let tags = await getTags(item.tags);
+  args.tags = separateTags(tags).replace(/(^,)|(,$)/g, '');
   args.item = item.toJSON();
   redirect_page({ res, type, args });
 }
@@ -38,7 +48,7 @@ function display_edit_product_page({ req, res, type, item, page, arrayType }) {
 async function add_product({ req, res, type, fields }) {
   const redirectLink = check_add_errors({ req, res, type, fields });
   if (redirectLink) return res.redirect(redirectLink);
-  fields = modify_product_fields({ req, fields });
+  fields = await modify_product_fields({ req, fields });
   await Product.create(fields);
   added_message({ req, type });
   successful_redirect({ req, res, type });
@@ -48,14 +58,15 @@ async function add_product({ req, res, type, fields }) {
 async function edit_product({ req, res, type, fields }) {
   const redirectLink = check_edit_errors({ req, res, type, fields });
   if (redirectLink) return res.redirect(redirectLink);
-  fields = modify_product_fields({ req, fields });
+  fields = await modify_product_fields({ req, fields });
+  console.log(fields);
   await Product.findByIdAndUpdate(req.body.itemId, fields);
   modefied_message({ req, type });
   successful_redirect({ req, res, type });
 }
 
 // Modify productTags and uploaded files
-function modify_product_fields({ req, fields }) {
+async function modify_product_fields({ req, fields }) {
   if (req.files['productGallary'])
     if (req.files['productGallary'].length > 0)
       fields.productGallary = req.files['productGallary'].map(
@@ -64,9 +75,39 @@ function modify_product_fields({ req, fields }) {
   if (req.files['mainImage'])
     if (req.files['mainImage'].length > 0)
       fields.mainImage = req.files['mainImage'][0].filename;
-
-  fields.productTags = fields.productTags.toLowerCase().replace(/, /g, ',');
+  fields.tags = await formatTags(req.body.tags);
   return fields;
+}
+
+async function formatTags(tags) {
+  tags = tags.split(',');
+  const arr = await Promise.all(
+    tags.map(async (tag) => {
+      const doc = await Tag.findOne({ name: tag });
+      if (doc) return doc._id;
+      const newDoc = await Tag.create({ name: tag });
+      return newDoc._id;
+    })
+  );
+  return arr;
+}
+
+// Tags
+async function getTags(tags) {
+  let stringTags = await Promise.all(
+    tags.map(async (tag) => {
+      const doc = await Tag.findById(tag, { name: 1 });
+      return doc.name;
+    })
+  );
+  return stringTags;
+}
+
+function separateTags(tags) {
+  let separateTags = tags.reduce((total, tag) => {
+    return total + tag + ',';
+  }, '');
+  return separateTags;
 }
 
 module.exports = {

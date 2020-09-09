@@ -31,9 +31,12 @@ const productSchema = mongoose.Schema({
   productGallary: {
     type: [],
   },
-  productTags: {
-    type: String,
-  },
+  tags: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'tag',
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,

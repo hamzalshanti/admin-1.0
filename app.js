@@ -24,7 +24,7 @@ db();
 require('./config/passport');
 
 // Middlewares
-app.use(logger('dev'));
+//app.use(logger('dev'));
 app.use(
   session({
     secret: 'sdasdada',
