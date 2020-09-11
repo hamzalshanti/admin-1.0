@@ -62,7 +62,16 @@
                                         {{/each}}
                                     </p>
                                 </div>
+                                <div class="mb-5">
+                                    <div class="stars-outer">
+                                        <div class="stars-inner"
+                                            style="width: {{getRatingWidth product.rateAverage }};">
+                                        </div>
+                                    </div>
+                                    <div class="number-rating">
 
+                                    </div>
+                                </div>
                                 <div role="tabpanel">
                                     <ul class="product-tab" role="tablist">
                                         <li role="presentation" class="active"><a href="#home" aria-controls="home"
@@ -77,26 +86,61 @@
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="profile">
                                             <h2>Reviews</h2>
-                                            <div class="submit-review">
-                                                <p><label for="name">Name</label> <input name="name" type="text">
-                                                </p>
-                                                <p><label for="email">Email</label> <input name="email" type="email">
-                                                </p>
-                                                <div class="rating-chooser">
-                                                    <p>Your rating</p>
 
-                                                    <div class="rating-wrap-post">
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
-                                                        <i class="fa fa-star"></i>
+                                            {{!-- reviews-details --}}
+                                            <div class="reviews-details">
+                                                <div>One Star: <span><b>{{RateDetails.oneRate}}</b></span></div>
+                                                <div>Two Star: <span><b>{{RateDetails.twoRate}}</b></span></div>
+                                                <div>Three Star: <span><b>{{RateDetails.threeRate}}</b></span></div>
+                                                <div>Four Star: <span><b>{{RateDetails.fourRate}}</b></span></div>
+                                                <div>Five Star: <span><b>{{RateDetails.fiveRate}}</b></span></div>
+                                            </div>
+                                            {{!-- /reviews-details --}}
+                                            <hr>
+                                            {{#if isOpenReview}}
+                                            {{!-- submit-review --}}
+                                            <div class="submit-review">
+
+                                                <div>
+                                                    <div id="full-stars-example-two">
+                                                        <div class="rating-group">
+                                                            <input disabled checked
+                                                                class="rating__input rating__input--none" name="rating3"
+                                                                id="rating3-none" value="0" type="radio">
+                                                            <label aria-label="1 star" class="rating__label"
+                                                                for="rating3-1"><i
+                                                                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                            <input class="rating__input" name="rating3" id="rating3-1"
+                                                                value="1" type="radio">
+                                                            <label aria-label="2 stars" class="rating__label"
+                                                                for="rating3-2"><i
+                                                                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                            <input class="rating__input" name="rating3" id="rating3-2"
+                                                                value="2" type="radio">
+                                                            <label aria-label="3 stars" class="rating__label"
+                                                                for="rating3-3"><i
+                                                                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                            <input class="rating__input" name="rating3" id="rating3-3"
+                                                                value="3" type="radio">
+                                                            <label aria-label="4 stars" class="rating__label"
+                                                                for="rating3-4"><i
+                                                                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                            <input class="rating__input" name="rating3" id="rating3-4"
+                                                                value="4" type="radio">
+                                                            <label aria-label="5 stars" class="rating__label"
+                                                                for="rating3-5"><i
+                                                                    class="rating__icon rating__icon--star fa fa-star"></i></label>
+                                                            <input class="rating__input" name="rating3" id="rating3-5"
+                                                                value="5" type="radio">
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <p><label for="review">Your review</label> <textarea name="review" id=""
-                                                        cols="30" rows="10"></textarea></p>
-                                                <p><input type="submit" value="Submit"></p>
+                                                <p><label for="review">Your review</label> <textarea name="review"
+                                                        id="review" cols="30" rows="10"></textarea></p>
+                                                <p><input type="submit" value="Submit" name="rateBtn" id="rateBtn"></p>
                                             </div>
+                                            {{!-- /submit-review --}}
+                                            {{/if}}
                                         </div>
                                     </div>
                                 </div>
@@ -137,3 +181,66 @@
         </div>
     </div>
 </div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Feedback Message</h4>
+            </div>
+            <div class="modal-body">
+                <p>Thank For Feedback</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    const rateBtn = document.getElementById('rateBtn'),
+        rate = document.getElementById('rate'),
+        review = document.getElementById('review'),
+        rateDiv = document.querySelector('.submit-review');
+
+    rateBtn.addEventListener('click', submitRate);
+
+
+    function submitRate() {
+        let rate_value;
+        if (document.getElementById('rating3-1').checked) {
+            rate_value = document.getElementById('rating3-1').value;
+        } else if (document.getElementById('rating3-2').checked) {
+            rate_value = document.getElementById('rating3-2').value;
+        } else if (document.getElementById('rating3-3').checked) {
+            rate_value = document.getElementById('rating3-3').value;
+        } else if (document.getElementById('rating3-4').checked) {
+            rate_value = document.getElementById('rating3-4').value;
+        } else if (document.getElementById('rating3-5').checked) {
+            rate_value = document.getElementById('rating3-5').value;
+        }
+        const data = {
+            rate: +rate_value,
+            review: review.value
+        }
+        fetch('/rate/{{product._id}}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                $('.submit-review').hide();
+                $('#myModal').modal('show');
+            })
+            .catch((error) => console.log(error))
+    }
+
+</script>

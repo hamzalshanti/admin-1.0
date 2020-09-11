@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { number } = require('joi');
 
 const productSchema = mongoose.Schema({
   productName: {
@@ -30,6 +31,18 @@ const productSchema = mongoose.Schema({
   },
   productGallary: {
     type: [],
+  },
+  rateCount: {
+    type: Number,
+    default: 0,
+  },
+  rateValue: {
+    type: Number,
+    default: 0,
+  },
+  rateAverage: {
+    type: Number,
+    default: 0,
   },
   tags: [
     {

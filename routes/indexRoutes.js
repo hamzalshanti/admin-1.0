@@ -7,6 +7,7 @@ const {
   get_single_product,
   get_checkout,
   get_order,
+  post_rate,
 } = require('../controllers/indexController');
 const { siteGuard } = require('../middlewares/authMiddleware');
 
@@ -17,5 +18,6 @@ router.get('/shop', siteGuard, get_shop);
 router.get('/single-product/:id', siteGuard, get_single_product);
 router.get('/checkout', siteGuard, get_checkout);
 router.get('/order', siteGuard, get_order);
+router.post('/rate/:id', siteGuard, post_rate);
 
 module.exports = router;

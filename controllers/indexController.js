@@ -1,5 +1,7 @@
 const Product = require('../models/productModel');
+const Rate = require('../models/rateModel');
 const Tag = require('../models/tagModel');
+const { isRateBefore, getRateDetails } = require('../functions/rateFn');
 
 /**
  * Index controllers of Route: /
@@ -68,17 +70,33 @@ const get_single_product = async (req, res) => {
   const product = await Product.findById(req.params.id)
     .populate('category', 'categoryName')
     .populate('tags', 'name');
+
+  /**  Get Related Products Accordinn To Category*/
   const relatedProducts = await Product.find({
     category: product.category._id,
   })
     .nor({ _id: product._id })
     .limit(6);
+
+  /**  Get Recent Products*/
   const recentProducts = await getRecentProducts(4);
+
+  /** Get Reviews Details */
+  const rates = await Rate.find({ productId: req.params.id });
+
+  /** Get Rate Details */
+  const RateDetails = await getRateDetails(req);
+
+  //** Check allowness to review */
+  let isOpenReview = await isRateBefore(req);
+
   res.render('matjri/single-product', {
     title: 'Product',
     product: product.toJSON(),
     relatedProducts: relatedProducts.map((product) => product.toJSON()),
     recentProducts: recentProducts.map((product) => product.toJSON()),
+    RateDetails,
+    isOpenReview,
   });
 };
 
@@ -108,8 +126,29 @@ const get_order = (req, res) => {
   });
 };
 
-// Function get recent product
+const post_rate = async (req, res) => {
+  try {
+    let isOpenReview = await isRateBefore(req);
+    if (!isOpenReview)
+      return res.status(406).json({ msg: 'You review this product before' });
+    const rate = await Rate.create({
+      userId: req.user._id,
+      productId: req.params.id,
+      rate: req.body.rate,
+      review: req.body.review,
+    });
+    const product = await Product.findById(req.params.id);
+    product.rateCount += 1;
+    product.rateValue += req.body.rate;
+    product.rateAverage = (product.rateValue / product.rateCount).toFixed(1);
+    await product.save();
+    res.status(201).json({ msg: 'Thanks for your review' });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
+/** Get recent products */
 async function getRecentProducts(limit) {
   const product = await Product.find({}).sort({ createdAt: -1 }).limit(limit);
   return product;
@@ -122,4 +161,5 @@ module.exports = {
   get_single_product,
   get_checkout,
   get_order,
+  post_rate,
 };

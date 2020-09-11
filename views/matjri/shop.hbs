@@ -23,6 +23,10 @@
                         <img src="/products/{{mainImage}}" alt="">
                     </div>
                     <h2><a href="/single-product/{{_id}}">{{productName}}</a></h2>
+                    <div class="stars-outer">
+                        <div class="stars-inner" style="width: {{getRatingWidth rateAverage }};">
+                        </div>
+                    </div>
                     <div class="product-carousel-price">
                         <ins>${{discount productPrice discount}}</ins> <del>${{productPrice}}</del>
                     </div>

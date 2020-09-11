@@ -17,6 +17,9 @@ const indexRoutes = require('./routes/indexRoutes');
 const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes/indexRoutes');
 
+// Helper
+const { isEqual, discount, getRatingWidth } = require('./config/helpers');
+
 // Database Excution
 db();
 
@@ -50,15 +53,9 @@ app.engine(
     defaultLayout: 'main',
     extname: '.hbs',
     helpers: {
-      isEqual: function (v1, v2, options) {
-        if (v1.toString() === v2.toString()) {
-          return options.fn(this);
-        }
-        return options.inverse(this);
-      },
-      discount: function (price, discount) {
-        return (price * (1 - discount / 100)).toFixed(2);
-      },
+      isEqual,
+      discount,
+      getRatingWidth,
     },
   })
 );
