@@ -17,3 +17,141 @@
 <!-- Slider -->
 <script type="text/javascript" src="/matjri/assets/js/bxslider.min.js"></script>
 <script type="text/javascript" src="/matjri/assets/js/script.slider.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+
+    /** Reviewing */
+    const rateBtn = document.getElementById('rateBtn'),
+        rate = document.getElementById('rate'),
+        review = document.getElementById('review'),
+        rateDiv = document.querySelector('.submit-review');
+
+    if (rateBtn !== null)
+        rateBtn.addEventListener('click', submitRate);
+
+
+    function submitRate() {
+        let rate_value;
+        if (document.getElementById('rating3-1').checked) {
+            rate_value = document.getElementById('rating3-1').value;
+        } else if (document.getElementById('rating3-2').checked) {
+            rate_value = document.getElementById('rating3-2').value;
+        } else if (document.getElementById('rating3-3').checked) {
+            rate_value = document.getElementById('rating3-3').value;
+        } else if (document.getElementById('rating3-4').checked) {
+            rate_value = document.getElementById('rating3-4').value;
+        } else if (document.getElementById('rating3-5').checked) {
+            rate_value = document.getElementById('rating3-5').value;
+        }
+        const data = {
+            rate: +rate_value,
+            review: review.value
+        }
+        fetch('/rate/{{product._id}}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then((res) => {
+                if (res.status === 201)
+                    res.json();
+                else
+                    throw 'error'
+            })
+            .then((data) => {
+                $('.submit-review').hide();
+                Swal.fire(
+                    'Review Done !',
+                    'Thank You For Review!',
+                    'success'
+                )
+            })
+            .catch((error) => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'you cant rate same product two times!',
+                    footer: '<a href>Read Our Privacy Policy?</a>'
+                })
+            })
+    }
+
+    /** Pagination */
+    const totalPages = '{{ totalPages }}';
+    currnetPage = '{{ page }}';
+    if (totalPages)
+        for (let i = 0; i < totalPages; ++i) {
+            const list = document.createElement('li'),
+                link = document.createElement('a');
+            link.setAttribute('href', `?page=${i + 1}`);
+            link.textContent = i + 1;
+            list.appendChild(link);
+            document.querySelector('.pagination').appendChild(list);
+        }
+
+
+    /**  Add to cart with qty */
+    const cart = document.querySelector('.cart');
+    if (cart !== null)
+        cart.addEventListener('submit', e => {
+            e.preventDefault();
+
+
+            const qty = document.querySelector('.qty').value
+            const data = { qty: +qty }
+
+
+            fetch('/add-to-cart/{{product._id}}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then((res) => {
+                    if (res.status === 201)
+                        return res.json();
+                    else
+                        throw 'error in add product'
+                })
+                .then((data) => {
+                    Swal.fire(
+                        'The product has been added to your cart',
+                        'Thank You!',
+                        'success'
+                    )
+                })
+                .catch((error) => console.log(error))
+        });
+
+
+    /** Add To Cart */
+    const addToCartBtn = document.querySelectorAll('.add_to_cart_button');
+    addToCartBtn.forEach(element => {
+        element.addEventListener('click', e => {
+            e.preventDefault();
+            const url = element.href;
+            fetch(url, {
+                method: 'POST',
+            })
+                .then((res) => {
+                    if (res.status === 201)
+                        return res.json();
+                    else
+                        throw 'error in add product'
+                })
+                .then((data) => {
+                    Swal.fire(
+                        'The product has been added to your cart',
+                        'Thank You!',
+                        'success'
+                    )
+                })
+                .catch((error) => console.log(error))
+        });
+    });
+</script>

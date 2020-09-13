@@ -33,7 +33,7 @@
 
                     <div class="product-option-shop">
                         <a class="add_to_cart_button" data-quantity="1" data-product_sku="" data-product_id="70"
-                            rel="nofollow" href="/canvas/shop/?add-to-cart=70">Add to cart</a>
+                            rel="nofollow" href="/add-to-cart/{{_id}}">Add to cart</a>
                     </div>
                 </div>
             </div>
@@ -63,16 +63,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    const totalPages = {{ totalPages }},
-    currnetPage = {{ page }};
-    for (let i = 0; i < totalPages; ++i) {
-        const list = document.createElement('li'),
-            link = document.createElement('a');
-        link.setAttribute('href', `?page=${i + 1}`);
-        link.textContent = i + 1;
-        list.appendChild(link);
-        document.querySelector('.pagination').appendChild(list);
-    }
-</script>

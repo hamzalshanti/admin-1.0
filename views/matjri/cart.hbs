@@ -32,38 +32,42 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {{#each products}}
+                                    {{!-- cart_item --}}
                                     <tr class="cart_item">
                                         <td class="product-remove">
                                             <a title="Remove this item" class="remove" href="#">×</a>
                                         </td>
 
                                         <td class="product-thumbnail">
-                                            <a href="single-product.html"><img width="145" height="145"
+                                            <a href="/single-product/{{item._id}}"><img width="145" height="145"
                                                     alt="poster_1_up" class="shop_thumbnail"
-                                                    src="img/product-thumb-2.jpg"></a>
+                                                    src="/products/{{item.mainImage}}"></a>
                                         </td>
 
                                         <td class="product-name">
-                                            <a href="single-product.html">Ship Your Idea</a>
+                                            <a href="/single-product/{{item._id}}">{{item.productName}}</a>
                                         </td>
 
                                         <td class="product-price">
-                                            <span class="amount">£15.00</span>
+                                            <span class="amount">${{discount item.productPrice item.discount}}</span>
                                         </td>
 
                                         <td class="product-quantity">
                                             <div class="quantity buttons_added">
                                                 <input type="button" class="minus" value="-">
                                                 <input type="number" size="4" class="input-text qty text" title="Qty"
-                                                    value="1" min="0" step="1">
+                                                    value="{{qty}}" min="0" step="1">
                                                 <input type="button" class="plus" value="+">
                                             </div>
                                         </td>
 
                                         <td class="product-subtotal">
-                                            <span class="amount">£15.00</span>
+                                            <span class="amount">${{price}}</span>
                                         </td>
                                     </tr>
+                                    {{!-- /cart_item --}}
+                                    {{/each}}
                                     <tr>
                                         <td class="actions" colspan="6">
                                             <div class="coupon">
@@ -85,7 +89,7 @@
                         <div class="cart-collaterals">
 
 
-                            <div class="cross-sells">
+                            {{!-- <div class="cross-sells">
                                 <h2>You may be interested in...</h2>
                                 <ul class="products">
                                     <li class="product">
@@ -114,7 +118,7 @@
                                             options</a>
                                     </li>
                                 </ul>
-                            </div>
+                            </div> --}}
 
 
                             <div class="cart_totals ">
@@ -124,7 +128,7 @@
                                     <tbody>
                                         <tr class="cart-subtotal">
                                             <th>Cart Subtotal</th>
-                                            <td><span class="amount">£15.00</span></td>
+                                            <td><span class="amount">{{totalPrice}}</span></td>
                                         </tr>
 
                                         <tr class="shipping">
@@ -141,7 +145,7 @@
                             </div>
 
 
-                            <form method="post" action="#" class="shipping_calculator">
+                            {{!-- <form method="post" action="#" class="shipping_calculator">
                                 <h2><a class="shipping-calculator-button" data-toggle="collapse"
                                         href="#calcalute-shipping-wrap" aria-expanded="false"
                                         aria-controls="calcalute-shipping-wrap">Calculate Shipping</a></h2>
@@ -412,7 +416,7 @@
                                             Totals</button></p>
 
                                 </section>
-                            </form>
+                            </form> --}}
 
 
                         </div>

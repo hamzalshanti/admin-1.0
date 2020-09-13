@@ -14,8 +14,13 @@ const getRatingWidth = function (rate) {
   return `${starPercentage}%`;
 };
 
+const rateProgress = function (starRate, totalCount) {
+  return `${(starRate / totalCount) * 100}%`;
+};
+
 module.exports = {
   isEqual,
   discount,
   getRatingWidth,
+  rateProgress,
 };

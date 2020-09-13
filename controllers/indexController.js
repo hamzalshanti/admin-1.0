@@ -1,6 +1,7 @@
 const Product = require('../models/productModel');
 const Rate = require('../models/rateModel');
 const Tag = require('../models/tagModel');
+const Cart = require('../models/cartModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
 
 /**
@@ -30,8 +31,11 @@ const get_index = async (req, res) => {
  * @param {object} res - response object
  */
 const get_cart = (req, res) => {
+  if (!req.session.cart) return res.render('matjri/cart', { products: null });
+  var cart = new Cart(req.session.cart);
   res.render('matjri/cart', {
-    title: 'Cart',
+    products: cart.getArrayOfItems(),
+    totalPrice: cart.totalPrice,
   });
 };
 
@@ -148,6 +152,18 @@ const post_rate = async (req, res) => {
   }
 };
 
+const add_to_cart = async (req, res) => {
+  try {
+    let qtyStep = req.body.qty ? req.body.qty : 1;
+    const productId = req.params.id;
+    const cart = new Cart(req.session.cart ? req.session.cart : {}, qtyStep);
+    const product = await Product.findById(productId);
+    cart.add(product, product._id);
+    req.session.cart = cart;
+    res.status(201).json('Add Done');
+  } catch (error) {}
+};
+
 /** Get recent products */
 async function getRecentProducts(limit) {
   const product = await Product.find({}).sort({ createdAt: -1 }).limit(limit);
@@ -162,4 +178,5 @@ module.exports = {
   get_checkout,
   get_order,
   post_rate,
+  add_to_cart,
 };

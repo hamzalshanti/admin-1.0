@@ -18,7 +18,12 @@ const authRoutes = require('./routes/authRoutes');
 const adminRoutes = require('./routes/adminRoutes/indexRoutes');
 
 // Helper
-const { isEqual, discount, getRatingWidth } = require('./config/helpers');
+const {
+  isEqual,
+  discount,
+  getRatingWidth,
+  rateProgress,
+} = require('./config/helpers');
 
 // Database Excution
 db();
@@ -56,6 +61,7 @@ app.engine(
       isEqual,
       discount,
       getRatingWidth,
+      rateProgress,
     },
   })
 );
@@ -70,6 +76,12 @@ app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin-panel', adminRoutes);
 
+// //create Global Variable
+// app.use((req, res, next) => {
+//   res.locals.totalQty = req.session.cart.totalQty;
+//   res.locals.totalPrice = parseInt(req.session.cart.totalPrice);
+//   next();
+// });
 // Error handle
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development

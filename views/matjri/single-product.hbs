@@ -52,7 +52,7 @@
                                         <input type="number" size="4" class="input-text qty text" title="Qty" value="1"
                                             name="quantity" min="1" step="1">
                                     </div>
-                                    <button class="add_to_cart_button" type="submit">Add to cart</button>
+                                    <button class="" type="submit">Add to cart</button>
                                 </form>
 
                                 <div class="product-inner-category">
@@ -62,15 +62,72 @@
                                         {{/each}}
                                     </p>
                                 </div>
-                                <div class="mb-5">
+                                <div class="review-container">
                                     <div class="stars-outer">
                                         <div class="stars-inner"
                                             style="width: {{getRatingWidth product.rateAverage }};">
                                         </div>
                                     </div>
-                                    <div class="number-rating">
-
+                                    {{!-- reviews-details --}}
+                                    <div class="reviews-details">
+                                        {{!-- reviews-container --}}
+                                        <div class="reviews-container">
+                                            <h2>Reviews</h2>
+                                            <div class="review">
+                                                <span class="icon-container">5 <i class="fas fa-star"></i></span>
+                                                <div class="progress">
+                                                    <div class="progress-done"
+                                                        style="width:{{rateProgress RateDetails.fiveRate product.rateCount}}">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="percent">{{rateProgress RateDetails.fiveRate product.rateCount}}</span>
+                                            </div>
+                                            <div class="review">
+                                                <span class="icon-container">4 <i class="fas fa-star"></i></span>
+                                                <div class="progress">
+                                                    <div class="progress-done"
+                                                        style="width:{{rateProgress RateDetails.fourRate product.rateCount}}">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="percent">{{rateProgress RateDetails.fourRate product.rateCount}}</span>
+                                            </div>
+                                            <div class="review">
+                                                <span class="icon-container">3 <i class="fas fa-star"></i></span>
+                                                <div class="progress">
+                                                    <div class="progress-done"
+                                                        style="width:{{rateProgress RateDetails.threeRate product.rateCount}}">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="percent">{{rateProgress RateDetails.threeRate product.rateCount}}</span>
+                                            </div>
+                                            <div class="review">
+                                                <span class="icon-container">2 <i class="fas fa-star"></i></span>
+                                                <div class="progress">
+                                                    <div class="progress-done"
+                                                        style="width:{{rateProgress RateDetails.twoRate product.rateCount}}">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="percent">{{rateProgress RateDetails.twoRate product.rateCount}}</span>
+                                            </div>
+                                            <div class="review">
+                                                <span class="icon-container">1 <i class="fas fa-star"></i></span>
+                                                <div class="progress">
+                                                    <div class="progress-done"
+                                                        style="width:{{rateProgress RateDetails.oneRate product.rateCount}}">
+                                                    </div>
+                                                </div>
+                                                <span
+                                                    class="percent">{{rateProgress RateDetails.oneRate product.rateCount}}</span>
+                                            </div>
+                                        </div>
+                                        {{!-- /reviews-container --}}
                                     </div>
+                                    {{!-- /reviews-details --}}
+                                    <i class="fas fa-angle-down"></i>
                                 </div>
                                 <div role="tabpanel">
                                     <ul class="product-tab" role="tablist">
@@ -85,17 +142,7 @@
                                             {{product.productDescription}}
                                         </div>
                                         <div role="tabpanel" class="tab-pane fade" id="profile">
-                                            <h2>Reviews</h2>
-
-                                            {{!-- reviews-details --}}
-                                            <div class="reviews-details">
-                                                <div>One Star: <span><b>{{RateDetails.oneRate}}</b></span></div>
-                                                <div>Two Star: <span><b>{{RateDetails.twoRate}}</b></span></div>
-                                                <div>Three Star: <span><b>{{RateDetails.threeRate}}</b></span></div>
-                                                <div>Four Star: <span><b>{{RateDetails.fourRate}}</b></span></div>
-                                                <div>Five Star: <span><b>{{RateDetails.fiveRate}}</b></span></div>
-                                            </div>
-                                            {{!-- /reviews-details --}}
+                                            <h2>Submit A Review</h2>
                                             <hr>
                                             {{#if isOpenReview}}
                                             {{!-- submit-review --}}
@@ -159,7 +206,8 @@
                                 <div class="product-f-image">
                                     <img src="/products/{{mainImage}}" alt="">
                                     <div class="product-hover">
-                                        <a href="" class="add-to-cart-link"><i class="fa fa-shopping-cart"></i> Add
+                                        <a href="/add-to-cart/{{_id}}" class="add_to_cart_button add-to-cart-link"><i
+                                                class="fa fa-shopping-cart"></i> Add
                                             to cart</a>
                                         <a href="/single-product/{{_id}}" class="view-details-link"><i
                                                 class="fa fa-link"></i> See
@@ -181,66 +229,3 @@
         </div>
     </div>
 </div>
-
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Feedback Message</h4>
-            </div>
-            <div class="modal-body">
-                <p>Thank For Feedback</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-
-    </div>
-</div>
-<script>
-    const rateBtn = document.getElementById('rateBtn'),
-        rate = document.getElementById('rate'),
-        review = document.getElementById('review'),
-        rateDiv = document.querySelector('.submit-review');
-
-    rateBtn.addEventListener('click', submitRate);
-
-
-    function submitRate() {
-        let rate_value;
-        if (document.getElementById('rating3-1').checked) {
-            rate_value = document.getElementById('rating3-1').value;
-        } else if (document.getElementById('rating3-2').checked) {
-            rate_value = document.getElementById('rating3-2').value;
-        } else if (document.getElementById('rating3-3').checked) {
-            rate_value = document.getElementById('rating3-3').value;
-        } else if (document.getElementById('rating3-4').checked) {
-            rate_value = document.getElementById('rating3-4').value;
-        } else if (document.getElementById('rating3-5').checked) {
-            rate_value = document.getElementById('rating3-5').value;
-        }
-        const data = {
-            rate: +rate_value,
-            review: review.value
-        }
-        fetch('/rate/{{product._id}}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                $('.submit-review').hide();
-                $('#myModal').modal('show');
-            })
-            .catch((error) => console.log(error))
-    }
-
-</script>
