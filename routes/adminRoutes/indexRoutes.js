@@ -4,6 +4,7 @@ const productRoutes = require('./productRoutes');
 const categoryRoutes = require('./categoryRoutes');
 const userRoutes = require('./userRoutes');
 const tagRoutes = require('./tagRoutes');
+const couponRoutes = require('./couponRoutes');
 const passport = require('passport');
 const {
   show_dashboard,
@@ -34,5 +35,6 @@ router.use('/product', productRoutes);
 router.use('/category', categoryRoutes);
 router.use('/user', userRoutes);
 router.use('/tag', tagRoutes);
+router.use('/coupon', couponRoutes);
 
 module.exports = router;

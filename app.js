@@ -71,17 +71,23 @@ app.set('view engine', '.hbs');
 app.use(passport.initialize());
 app.use(passport.session());
 
+//create Global Variable
+app.use((req, res, next) => {
+  if (req.session.cart) {
+    res.locals.totalQty = req.session.cart.totalQty;
+    res.locals.totalPrice = req.session.cart.totalPrice;
+  } else {
+    res.locals.totalQty = 0;
+    res.locals.totalPrice = 0;
+  }
+  next();
+});
+
 // Routes Execution
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin-panel', adminRoutes);
 
-// //create Global Variable
-// app.use((req, res, next) => {
-//   res.locals.totalQty = req.session.cart.totalQty;
-//   res.locals.totalPrice = parseInt(req.session.cart.totalPrice);
-//   next();
-// });
 // Error handle
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development

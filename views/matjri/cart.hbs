@@ -36,7 +36,8 @@
                                     {{!-- cart_item --}}
                                     <tr class="cart_item">
                                         <td class="product-remove">
-                                            <a title="Remove this item" class="remove" href="#">×</a>
+                                            <a title="Remove this item" class="remove"
+                                                href="/cart/delete/{{item._id}}">×</a>
                                         </td>
 
                                         <td class="product-thumbnail">
@@ -57,7 +58,8 @@
                                             <div class="quantity buttons_added">
                                                 <input type="button" class="minus" value="-">
                                                 <input type="number" size="4" class="input-text qty text" title="Qty"
-                                                    value="{{qty}}" min="0" step="1">
+                                                    value="{{qty}}" min="0" step="1" data-id="{{item._id}}" data-prev="
+                                                    {{qty}}">
                                                 <input type="button" class="plus" value="+">
                                             </div>
                                         </td>
@@ -72,12 +74,11 @@
                                         <td class="actions" colspan="6">
                                             <div class="coupon">
                                                 <label for="coupon_code">Coupon:</label>
-                                                <input type="text" placeholder="Coupon code" value="" id="coupon_code"
-                                                    class="input-text" name="coupon_code">
-                                                <input type="submit" value="Apply Coupon" name="apply_coupon"
-                                                    class="button">
+                                                <input type="text" placeholder="Coupon code" value="{{coupon.code}}"
+                                                    id="coupon_code" class="input-text" name="coupon_code" required>
+                                                <input type="submit" value="Apply Coupon" class="apply_coupon">
                                             </div>
-                                            <input type="submit" value="Update Cart" name="update_cart" class="button">
+                                            <input type="submit" value="Update Cart" class="update_cart" class="button">
                                             <input type="submit" value="Checkout" name="proceed"
                                                 class="checkout-button button alt wc-forward">
                                         </td>
@@ -128,17 +129,18 @@
                                     <tbody>
                                         <tr class="cart-subtotal">
                                             <th>Cart Subtotal</th>
-                                            <td><span class="amount">{{totalPrice}}</span></td>
+                                            <td><span class="amount1">{{totalPrice}}</span>
+                                            </td>
                                         </tr>
 
                                         <tr class="shipping">
-                                            <th>Shipping and Handling</th>
-                                            <td>Free Shipping</td>
+                                            <th>Coupon Discount</th>
+                                            <td class="coupon_discount"></td>
                                         </tr>
 
                                         <tr class="order-total">
                                             <th>Order Total</th>
-                                            <td><strong><span class="amount">£15.00</span></strong> </td>
+                                            <td><strong><span class="amount2">${{totalPrice}}</span></strong> </td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -426,3 +428,75 @@
         </div>
     </div>
 </div>
+
+
+<script>
+    const code = document.getElementById('coupon_code');
+    const apply_coupon = document.querySelector('.apply_coupon');
+    const coupon_discount = document.querySelector('.coupon_discount');
+    const amount2 = document.querySelector('.amount2');
+    const totalPrice = parseFloat('{{totalPrice}}');
+    const discountRate = '{{coupon.discountRate}}'
+    window.onload = () => {
+        coupon_discount.innerHTML = (totalPrice * (discountRate / 100)).toFixed(2);
+        amount2.innerHTML = '$' + totalPrice * (1 - discountRate / 100);
+    }
+
+    if (apply_coupon !== null)
+        apply_coupon.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const data = {
+                code: code.value
+            }
+            fetch('/cart/coupon', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then((res) => {
+                    if (res.status === 200)
+                        return res.json();
+                    else
+                        throw 'code not exist'
+                })
+                .then((data) => {
+                    coupon_discount.innerHTML = (totalPrice * (data.discountRate / 100)).toFixed(2);
+                    amount2.innerHTML = '$' + totalPrice * (1 - data.discountRate / 100);
+                })
+                .catch((error) => {
+                    coupon_discount.innerHTML = 0
+                    amount2.innerHTML = '$' + totalPrice;
+                })
+        })
+
+</script>
+
+<script>
+    const update_cart = document.querySelector('.update_cart');
+    const qtys = document.querySelectorAll('.qty');
+    update_cart.addEventListener('click', (e) => {
+        e.preventDefault();
+        const data = []
+        qtys.forEach(qty => {
+            data.push({
+                id: qty.getAttribute('data-id'),
+                qty: +qty.value,
+            })
+        });
+        console.log(data)
+        fetch('cart/update', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+            .then(res => res.json())
+            .then(data => {
+                console.log(data);
+            })
+    })
+</script>

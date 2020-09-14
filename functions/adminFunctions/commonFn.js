@@ -24,7 +24,7 @@ function set_render_args({ req, type, page, arrayType = [] }) {
 function show_items({ req, res, type, items }) {
   return res.render(`dashboard/${type}/show`, {
     layout: 'admin',
-    items: items.map((user) => user.toJSON()),
+    items: items.map((item) => item.toJSON()),
     success: req.flash('success')[0],
   });
 }

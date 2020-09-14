@@ -15,6 +15,7 @@ const getRatingWidth = function (rate) {
 };
 
 const rateProgress = function (starRate, totalCount) {
+  if (starRate === 0 && totalCount === 0) return '0%';
   return `${(starRate / totalCount) * 100}%`;
 };
 

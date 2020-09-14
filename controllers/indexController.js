@@ -2,8 +2,8 @@ const Product = require('../models/productModel');
 const Rate = require('../models/rateModel');
 const Tag = require('../models/tagModel');
 const Cart = require('../models/cartModel');
+const Coupon = require('../models/couponModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
-
 /**
  * Index controllers of Route: /
  */
@@ -32,10 +32,12 @@ const get_index = async (req, res) => {
  */
 const get_cart = (req, res) => {
   if (!req.session.cart) return res.render('matjri/cart', { products: null });
-  var cart = new Cart(req.session.cart);
+  const cart = new Cart(req.session.cart);
+  console.log(req.session.cart);
   res.render('matjri/cart', {
     products: cart.getArrayOfItems(),
     totalPrice: cart.totalPrice,
+    coupon: cart.coupon,
   });
 };
 
@@ -54,7 +56,6 @@ const get_shop = async (req, res) => {
   const count = await Product.countDocuments();
   let totalPages = Math.ceil(count / limit),
     currentPage = page;
-  console.log(totalPages, count);
   res.render('matjri/shop', {
     title: 'shop',
     products: products.map((product) => product.toJSON()),
@@ -164,6 +165,47 @@ const add_to_cart = async (req, res) => {
   } catch (error) {}
 };
 
+const add_coupon = async (req, res) => {
+  try {
+    const coupon = await Coupon.findOne({ code: req.body.code });
+    if (!coupon) {
+      let cart1 = new Cart(req.session.cart);
+      cart1.coupon = '0';
+      req.session.cart = cart1;
+      return res.status(402).json({
+        msg: 'coupon not Exist',
+      });
+    }
+    let cart = new Cart(req.session.cart);
+    cart.coupon = coupon;
+    req.session.cart = cart;
+    res.status(200).send(coupon);
+  } catch (error) {}
+};
+
+const update_cart = async (req, res) => {
+  const cart = new Cart(req.session.cart);
+  await Promise.all(
+    req.body.map(async (element) => {
+      const product = await Product.findById(element.id);
+      if (product) {
+        const qty = element.qty;
+        cart.update(product, product._id, qty);
+        console.log('dsds');
+      }
+    })
+  );
+  req.session.cart = cart;
+  res.status(200).json('sad');
+};
+
+const delete_cart_item = (req, res) => {
+  const cart = new Cart(req.session.cart);
+  cart.deleteItem(req.params.id);
+  req.session.cart = cart;
+  res.redirect('/cart');
+};
+
 /** Get recent products */
 async function getRecentProducts(limit) {
   const product = await Product.find({}).sort({ createdAt: -1 }).limit(limit);
@@ -179,4 +221,7 @@ module.exports = {
   get_order,
   post_rate,
   add_to_cart,
+  add_coupon,
+  update_cart,
+  delete_cart_item,
 };

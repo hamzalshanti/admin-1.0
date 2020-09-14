@@ -1,5 +1,6 @@
 const { body } = require('express-validator');
 const User = require('./models/userModel');
+const Coupon = require('./models/couponModel');
 
 const singupValidation = [
   body('fullName').trim().notEmpty().withMessage('full Name required'),
@@ -46,8 +47,25 @@ const categoryValidation = [
     .withMessage('category description cannot be empty'),
 ];
 
+const couponValidation = [
+  body('code')
+    .trim()
+    .notEmpty()
+    .withMessage('code cannot be empty')
+    .custom(async (value, { req }) => {
+      coupon = await Coupon.findOne({ code: value });
+      if (coupon) throw 'code already exist';
+      return true;
+    }),
+  body('discountRate')
+    .trim()
+    .notEmpty()
+    .withMessage('discount cannot be empty'),
+];
+
 module.exports = {
   singupValidation,
   productValidation,
   categoryValidation,
+  couponValidation,
 };
