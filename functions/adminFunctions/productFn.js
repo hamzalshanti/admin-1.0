@@ -9,7 +9,11 @@ const {
 } = require('./commonFn');
 const Product = require('../../models/productModel');
 const Tag = require('../../models/tagModel');
-const _ = require('lodash');
+const { cloudinary } = require('../../config/cloudinary');
+const datauri = require('datauri');
+const DatauriParser = require('datauri/parser');
+const path = require('path');
+const { log } = require('console');
 
 /**
  * Product functions that used in product controller
@@ -59,7 +63,6 @@ async function edit_product({ req, res, type, fields }) {
   const redirectLink = check_edit_errors({ req, res, type, fields });
   if (redirectLink) return res.redirect(redirectLink);
   fields = await modify_product_fields({ req, fields });
-  console.log(fields);
   await Product.findByIdAndUpdate(req.body.itemId, fields);
   modefied_message({ req, type });
   successful_redirect({ req, res, type });
@@ -67,14 +70,29 @@ async function edit_product({ req, res, type, fields }) {
 
 // Modify productTags and uploaded files
 async function modify_product_fields({ req, fields }) {
+  const parser = new DatauriParser();
   if (req.files['productGallary'])
     if (req.files['productGallary'].length > 0)
-      fields.productGallary = req.files['productGallary'].map(
-        (file) => file.filename
+      fields.productGallary = await Promise.all(
+        req.files['productGallary'].map(async (file) => {
+          const content = parser.format(
+            path.extname(file.originalname),
+            file.buffer
+          ).content;
+          const result = await cloudinary.uploader.upload(content);
+          return result.secure_url;
+        })
       );
+
   if (req.files['mainImage'])
-    if (req.files['mainImage'].length > 0)
-      fields.mainImage = req.files['mainImage'][0].filename;
+    if (req.files['mainImage'].length > 0) {
+      const content = parser.format(
+        path.extname(req.files['mainImage'][0].originalname),
+        req.files['mainImage'][0].buffer
+      ).content;
+      const result = await cloudinary.uploader.upload(content);
+      fields.mainImage = result.secure_url;
+    }
   fields.tags = await formatTags(req.body.tags);
   return fields;
 }

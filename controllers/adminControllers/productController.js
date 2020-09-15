@@ -68,7 +68,6 @@ const get_edit_product = async (req, res) => {
  * @param {object} res - reponse object
  */
 const post_add_product = async (req, res) => {
-  console.log(req.body);
   const fields = {
     productName: req.body.productName,
     productPrice: req.body.productPrice,

@@ -10,7 +10,7 @@
         <h2 class="sidebar-title">Recent Products</h2>
         {{#each recentProducts }}
         <div class="thubmnail-recent">
-            <img src="/products/{{mainImage}}" class="recent-thumb" alt="">
+            <img src="{{mainImage}}" class="recent-thumb" alt="">
             <h2><a href="/single-product/{{_id}}">{{productName}}</a></h2>
             <div class="product-sidebar-price">
                 <ins>${{discount productPrice discount}}</ins> <del>${{productPrice}}</del>

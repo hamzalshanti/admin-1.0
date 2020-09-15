@@ -11,8 +11,10 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.0",
+    "cloudinary": "^1.23.0",
     "connect-flash": "^0.1.1",
     "connect-mongo": "^3.2.0",
+    "datauri": "^3.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-handlebars": "^5.1.0",
@@ -28,7 +30,8 @@
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
-    "slugify": "^1.4.5"
+    "slugify": "^1.4.5",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

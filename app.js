@@ -10,6 +10,7 @@ const methodOverride = require('method-override');
 const mongoStore = require('connect-mongo')(session);
 const path = require('path');
 const db = require('./config/db');
+const Chat = require('./models/chatModel');
 const app = express();
 
 // Routes Decleration
@@ -101,4 +102,44 @@ app.use(function (err, req, res, next) {
 
 // Server Running
 const PORT = process.env.PORT || 2020;
-app.listen(PORT, (_) => console.log(`SERVER RUNNING ON ${PORT}`));
+const server = app.listen(PORT, (_) =>
+  console.log(`SERVER RUNNING ON ${PORT}`)
+);
+
+const socket = require('socket.io');
+const { log } = require('console');
+const io = socket(server);
+
+io.on('connection', (socket) => {
+  let room;
+  socket.on('joinSite', ({ userId }) => {
+    room = userId;
+    console.log(room);
+    socket.join(room);
+  });
+  socket.on('joinChat', (info) => {
+    if (info.sender < info.reciever) room = info.sender + info.reciever;
+    else room = info.reciever + info.sender;
+    console.log(room);
+    socket.join(room);
+  });
+  socket.on('chatMsg', async (chat) => {
+    const newChat = new Chat({
+      msg: chat.msg,
+      sender: mongoose.Types.ObjectId(chat.sender),
+      reciever: mongoose.Types.ObjectId(chat.reciever),
+    });
+    await newChat.save();
+    console.log(room);
+    socket.to(room).emit('chatMsg', chat.msg);
+  });
+  socket.on('typing', () => {
+    socket.to(room).emit('typing');
+  });
+  socket.on('stopTyping', () => {
+    socket.to(room).emit('stopTyping');
+  });
+  socket.on('msgNotification', (data) => {
+    io.to(data.reciever).emit('noti');
+  });
+});
