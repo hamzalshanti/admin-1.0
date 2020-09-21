@@ -11,6 +11,9 @@ const mongoStore = require('connect-mongo')(session);
 const path = require('path');
 const db = require('./config/db');
 const Chat = require('./models/chatModel');
+const User = require('./models/userModel');
+const getLatestTextedUsers = require('./functions/getLatestUserTexted');
+const getUnseenMsgs = require('./functions/getUnseenMessages');
 const app = express();
 
 // Routes Decleration
@@ -73,7 +76,11 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 //create Global Variable
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  if (req.user) {
+    res.locals.latestTextedUsers = await getLatestTextedUsers(req);
+    res.locals.unseenMsgs = await getUnseenMsgs(req);
+  }
   if (req.session.cart) {
     res.locals.totalQty = req.session.cart.totalQty;
     res.locals.totalPrice = req.session.cart.totalPrice;
@@ -81,6 +88,7 @@ app.use((req, res, next) => {
     res.locals.totalQty = 0;
     res.locals.totalPrice = 0;
   }
+  if (req.user) res.locals.userSessionID = req.user._id.toString();
   next();
 });
 
@@ -111,35 +119,62 @@ const { log } = require('console');
 const io = socket(server);
 
 io.on('connection', (socket) => {
-  let room;
-  socket.on('joinSite', ({ userId }) => {
-    room = userId;
-    console.log(room);
-    socket.join(room);
+  let chatRoom;
+  let notiRoom;
+  socket.on('joinChatPage', ({ userId }) => {
+    notiRoom = userId;
+    socket.join(notiRoom);
   });
   socket.on('joinChat', (info) => {
-    if (info.sender < info.reciever) room = info.sender + info.reciever;
-    else room = info.reciever + info.sender;
-    console.log(room);
-    socket.join(room);
+    socket.leave(chatRoom);
+    if (info.from < info.to) chatRoom = info.from + info.to;
+    else chatRoom = info.to + info.from;
+    socket.join(chatRoom);
+    if (io.sockets.adapter.rooms[chatRoom])
+      if (io.sockets.adapter.rooms[chatRoom].length === 2) {
+        socket.to(chatRoom).emit('chatOpen');
+      }
   });
   socket.on('chatMsg', async (chat) => {
     const newChat = new Chat({
       msg: chat.msg,
-      sender: mongoose.Types.ObjectId(chat.sender),
-      reciever: mongoose.Types.ObjectId(chat.reciever),
+      from: chat.from,
+      to: chat.to,
     });
+    // Check Two In chat
+    if (chatRoom)
+      if (io.sockets.adapter.rooms[chatRoom].length === 2) {
+        newChat.read = true;
+      }
     await newChat.save();
-    console.log(room);
-    socket.to(room).emit('chatMsg', chat.msg);
+    socket.to(chatRoom).emit('chatMsg', {
+      msg: newChat.msg,
+      date: newChat.date,
+    });
+  });
+  socket.on('read', () => {
+    if (chatRoom)
+      if (io.sockets.adapter.rooms[chatRoom].length === 2)
+        return socket.emit('read', true);
+
+    return socket.emit('read', false);
   });
   socket.on('typing', () => {
-    socket.to(room).emit('typing');
+    socket.to(chatRoom).emit('typing');
   });
   socket.on('stopTyping', () => {
-    socket.to(room).emit('stopTyping');
+    socket.to(chatRoom).emit('stopTyping');
   });
   socket.on('msgNotification', (data) => {
-    io.to(data.reciever).emit('noti');
+    let appendDotNoti = true;
+    if (io.sockets.adapter.rooms[chatRoom])
+      if (io.sockets.adapter.rooms[chatRoom].length === 2)
+        appendDotNoti = false;
+
+    io.to(data.to).emit('noti', {
+      from: data.from,
+      msg: data.msg,
+      appendDotNoti: appendDotNoti,
+    });
   });
 });

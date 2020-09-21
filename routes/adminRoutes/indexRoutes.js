@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const {
   show_dashboard,
   admin_login,
+  chat_page,
 } = require('../../controllers/adminControllers/indexController');
 const {
   adminGuard,
@@ -39,43 +40,7 @@ router.use('/category', categoryRoutes);
 router.use('/user', userRoutes);
 router.use('/tag', tagRoutes);
 router.use('/coupon', couponRoutes);
-router.get('/chat/:id', async (req, res) => {
-  try {
-    let chats = await Chat.find({
-      $and: [
-        {
-          $or: [
-            { sender: mongoose.Types.ObjectId(req.user._id) },
-            { reciever: mongoose.Types.ObjectId(req.user._id) },
-          ],
-        },
-        {
-          $or: [
-            { sender: mongoose.Types.ObjectId(req.params.id) },
-            { reciever: mongoose.Types.ObjectId(req.params.id) },
-          ],
-        },
-      ],
-    });
-    chats = formatMsgs(req, chats);
-    res.render('dashboard/chat', {
-      sender: req.user._id,
-      reciever: req.params.id,
-      chats: chats,
-      layout: 'admin',
-    });
-  } catch (error) {
-    console.log(error);
-  }
-});
-
-function formatMsgs(req, chats) {
-  chats = chats.map((msg) => msg.toJSON());
-  chats.forEach((chat) => {
-    if (chat.sender.toString() === req.user._id.toString())
-      chat.outgoing = true;
-  });
-  return chats;
-}
+router.get('/chat', chat_page);
+router.get('/chat/:id', chat_page);
 
 module.exports = router;

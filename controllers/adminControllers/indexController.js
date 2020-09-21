@@ -27,7 +27,14 @@ const admin_login = (req, res) => {
   });
 };
 
+const chat_page = (req, res) => {
+  res.render('chat', {
+    layout: 'admin',
+  });
+};
+
 module.exports = {
   show_dashboard,
   admin_login,
+  chat_page,
 };

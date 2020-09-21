@@ -3,7 +3,9 @@ const Rate = require('../models/rateModel');
 const Tag = require('../models/tagModel');
 const Cart = require('../models/cartModel');
 const Coupon = require('../models/couponModel');
+const Chat = require('../models/chatModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
+const getLatestTextedUsers = require('../functions/getLatestUserTexted');
 /**
  * Index controllers of Route: /
  */
@@ -33,7 +35,6 @@ const get_index = async (req, res) => {
 const get_cart = (req, res) => {
   if (!req.session.cart) return res.render('matjri/cart', { products: null });
   const cart = new Cart(req.session.cart);
-  console.log(req.session.cart);
   res.render('matjri/cart', {
     products: cart.getArrayOfItems(),
     totalPrice: cart.totalPrice,
@@ -191,7 +192,6 @@ const update_cart = async (req, res) => {
       if (product) {
         const qty = element.qty;
         cart.update(product, product._id, qty);
-        console.log('dsds');
       }
     })
   );
@@ -204,6 +204,14 @@ const delete_cart_item = (req, res) => {
   cart.deleteItem(req.params.id);
   req.session.cart = cart;
   res.redirect('/cart');
+};
+
+const chat_page = async (req, res) => {
+  try {
+    res.render('chat');
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 /** Get recent products */
@@ -224,4 +232,5 @@ module.exports = {
   add_coupon,
   update_cart,
   delete_cart_item,
+  chat_page,
 };

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,33 +8,26 @@
   <title>AdminLTE 3 | Dashboard 3</title>
   {{>admin/styles}}
 </head>
-<!--
-BODY TAG OPTIONS:
-=================
-Apply one or more of the following classes to to the body tag
-to get the desired effect
-|---------------------------------------------------------|
-|LAYOUT OPTIONS | sidebar-collapse                        |
-|               | sidebar-mini                            |
-|---------------------------------------------------------|
--->
+
+
 <body class="hold-transition sidebar-mini">
-<div class="wrapper">
+  <div class="wrapper">
 
-{{>admin/nav}}
-{{>admin/aside}}
+    {{>admin/nav}}
+    {{>admin/aside}}
 
-{{{body}}}
+    {{{body}}}
 
 
-</div>
-<!-- ./wrapper -->
+  </div>
+  <!-- ./wrapper -->
 
-<!-- Control Sidebar -->
-<aside class="control-sidebar control-sidebar-dark">
-  <!-- Control sidebar content goes here -->
-</aside>
-<!-- /.control-sidebar -->
-
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+  {{>admin/scripts}}
 </body>
+
 </html>

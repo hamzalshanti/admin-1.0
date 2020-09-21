@@ -21,3 +21,259 @@
 <script>
     $('#tags').tagsInput();
 </script>
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="/matjri/assets/js/init-io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.28.0/moment.min.js"
+    integrity="sha512-Q1f3TS3vSt1jQ8AwP2OuenztnLU6LwxgyyYOG1jgMW/cbEMHps/3wjvnl1P3WTrF3chJUWEoxDUEjMxDV8pujg=="
+    crossorigin="anonymous"></script>
+<script>
+    // JoinChatPage
+    notificationSocket.emit('joinChatPage', {
+        userId: '{{userSessionID}}'
+    })
+    const chatLists = document.querySelectorAll('.chat_list');
+    const latestTextedUsers = document.querySelectorAll('.latest-texted-user-list')
+    const messageHistory = document.querySelector('.msg_history')
+    const form = document.querySelector('.input_msg_write');
+    const inputMsg = document.querySelector('.write_msg');
+    const typingDiv = document.getElementById('typing');
+    const messagesAlert = document.querySelector('.messages-notification-alert')
+    let to;
+    let id_to;
+    let skip = 0;
+    const spinner = document.createElement('div')
+    spinner.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`
+    const from = '{{userSessionID}}'
+    var isTyping = false;
+    var timeout = undefined;
+    chatLists.forEach((element) => {
+        element.onclick = async function (e) {
+            e.preventDefault();
+            to = element.getAttribute('href');
+
+            // Emit Join Chat
+            chatSocket.emit('joinChat', {
+                from,
+                to,
+            });
+
+            element.classList.add('active_chat');
+            element.querySelector('.dot-of-chat-page').style.display = 'none';
+            messageHistory.innerHTML = '';
+            id_to = this.getAttribute('href')
+            skip = 0;
+            await chunkOfData(id_to);
+            messageHistory.scrollTop = messageHistory.scrollHeight;
+
+            //remove the dot Noti from list
+            latestTextedUsers.forEach(l => {
+                if (id_to === l.getAttribute('data-texted')) {
+                    l.querySelector('.dot-chat-list').innerHTML = ''
+                }
+            })
+        }
+    })
+
+
+
+    if (form)
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const msg = e.target.elements.msg.value;
+
+            // Socket Emit Msg to Server
+            chatSocket.emit('chatMsg', {
+                msg,
+                from,
+                to,
+            });
+
+            //Emit Notification Theres a message
+            chatSocket.emit('msgNotification', {
+                msg,
+                from,
+                to
+            })
+
+            // Check Seen Or Not 
+            outgoingMsg(msg, Date.now(), false, 'bottom');
+            e.target.elements.msg.value = '';
+            e.target.elements.msg.focus();
+            prependToTop(to, msg);
+            messageHistory.scrollTop = messageHistory.scrollHeight;
+            chatSocket.emit('read');
+        })
+
+    // Listen to Messages
+    chatSocket.on('chatMsg', ({ msg, date }) => {
+        incomingMsg(msg, date, 'bottom');
+        messageHistory.scrollTop = messageHistory.scrollHeight;
+    });
+
+    // Listen For Typing ...
+
+    if (inputMsg)
+        inputMsg.addEventListener('keypress', onKeyDown);
+
+    chatSocket.on('typing', () => {
+        typingDiv.innerHTML = 'Typing ...';
+        messageHistory.scrollTop = messageHistory.scrollHeight;
+    });
+
+    chatSocket.on('stopTyping', () => {
+        typingDiv.innerHTML = '';
+    });
+
+    function timeoutFunction() {
+        isTyping = false;
+        chatSocket.emit('stopTyping');
+    }
+
+    function onKeyDown(e) {
+        if (!isTyping && e.which !== 13) {
+            isTyping = true;
+            chatSocket.emit('typing');
+            timeout = setTimeout(timeoutFunction, 1000);
+        } else {
+            clearTimeout(timeout);
+            timeout = setTimeout(timeoutFunction, 1000);
+        }
+    }
+
+    chatSocket.on('read', read => {
+        if (read) {
+            const readDiv = document.querySelector('.outgoing_msg:last-child .read')
+            readDiv.setAttribute('data-read', 'true')
+            readDiv.innerHTML = 'seen';
+        }
+    })
+    chatSocket.on('chatOpen', () => {
+        const readDivS = document.querySelectorAll('.outgoing_msg .read')
+        readDivS.forEach(r => {
+            if (r.getAttribute('data-read') === 'false') {
+                r.setAttribute('data-read', 'true')
+                r.innerHTML = 'seen';
+            }
+        })
+    })
+
+    //outoutMessage
+    function incomingMsg(msg, date, postion = 'top') {
+        const div = document.createElement('div');
+        div.classList.add('incoming_msg');
+        div.innerHTML = `
+            <div class="received_msg">
+            <div class="received_withd_msg">
+            <p>${msg}</p>
+            <span class="time_date">${moment(date).calendar()}</span>
+            </div>
+            </div>`;
+        if (postion === 'top') messageHistory.prepend(div);
+        else messageHistory.append(div);
+    }
+
+    //outoutMessage
+    function outgoingMsg(msg, date, read, postion = 'top') {
+        const div = document.createElement('div');
+        div.classList.add('outgoing_msg');
+        div.innerHTML = `
+        <div class="sent_msg">
+            <p>${msg}</p>
+            <span class="time_date">${moment(date).calendar()}</span >
+            <div class="read" data-read="false">${read}</div>
+        </div >`;
+        if (postion === 'top') messageHistory.prepend(div);
+        else messageHistory.append(div);
+    }
+
+    // Listen To Notifications
+    notificationSocket.on('noti', ({ from, msg, appendDotNoti }) => {
+        prependToTop(from, msg, appendDotNoti);
+    })
+
+    function prependToTop(id, msg, appendDotNoti = false) {
+        chatLists.forEach(c => {
+            if (c.getAttribute('href') === id) {
+                c.querySelector('.chat_side_msg').innerHTML = msg;
+                c.querySelector('.chat_date').innerHTML = moment().calendar();
+                if (appendDotNoti) {
+                    c.querySelector('.dot-of-chat-page').style.display = 'inline-block'
+                    messagesAlert.style.display = 'inline-block'
+                }
+                document.querySelector('.inbox_chat').prepend(c);
+            }
+        })
+        latestTextedUsers.forEach(c => {
+            if (c.getAttribute('data-texted') === id) {
+                c.querySelector('.list-msg').innerHTML = msg;
+                c.querySelector('.list-date').innerHTML = moment().calendar();
+                if (appendDotNoti) {
+                    let num = parseInt(c.querySelector('.dot-chat-list').textContent);
+                    if (isNaN(num)) num = 0
+                    c.querySelector('.dot-chat-list').innerHTML = num + 1;
+                    messagesAlert.style.display = 'inline-block'
+                }
+
+                document.querySelector('.chat-box').prepend(c);
+            }
+        })
+    }
+
+    function showSpinner() {
+        messageHistory.prepend(spinner);
+        setTimeout(() => {
+            spinner.remove();
+        }, 5000);
+    }
+    // Lazy Load Of Message History
+    if (messageHistory)
+        messageHistory.addEventListener('scroll', function () {
+            if (this.scrollTop === 0) {
+                showSpinner()
+                skip += 10
+                chunkOfData(id_to, skip)
+            }
+        });
+
+    async function chunkOfData(id_to, skip = 0) {
+        await fetch('/get-messages', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: id_to,
+                skip: skip
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                data.forEach(conv => {
+                    if (conv.from === from)
+                        outgoingMsg(conv.msg, conv.createdAt, conv.read)
+                    else
+                        incomingMsg(conv.msg, conv.createdAt)
+                })
+                spinner.remove();
+            })
+            .catch(error => console.log(error))
+    }
+
+    //on load
+    window.onload = function () {
+        const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
+        chatLists.forEach(c => {
+            if (c.getAttribute('href') === getLastItem(window.location.href)) {
+                c.click()
+                history.pushState('', ' ', 'messages')
+            }
+        })
+    }
+
+    const messageIcon = document.querySelector('.messages-dropdown')
+    if (messageIcon)
+        messageIcon.onclick = function () {
+            messagesAlert.style.display = 'none'
+        }
+</script>

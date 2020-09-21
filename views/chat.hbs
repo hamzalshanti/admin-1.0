@@ -1,0 +1,62 @@
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="container">
+        <h3 class=" text-center">Messaging</h3>
+        <div class="messaging">
+            <div class="inbox_msg">
+                <div class="inbox_people">
+                    <div class="headind_srch">
+                        <div class="recent_heading">
+                            <h4>Recent</h4>
+                        </div>
+                        <div class="srch_bar">
+                            <div class="stylish-input-group">
+                                <input type="text" class="search-bar" placeholder="Search">
+                                <span class="input-group-addon">
+                                    <button type="button"> <i class="fa fa-search" aria-hidden="true"></i> </button>
+                                </span> </div>
+                        </div>
+                    </div>
+                    <div class="inbox_chat">
+                        {{#each latestTextedUsers}}
+                        {{!-- Person Chat --}}
+                        <a href="{{userDetails._id}}" class="chat_list" style="display: block;">
+                            <div class="chat_people">
+                                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png"
+                                        alt="sunil"> </div>
+                                <div class="chat_ib">
+                                    <h5>{{userDetails.fullName}}<span class="chat_date">{{date}}</span></h5>
+                                    <p class="chat_side_msg">{{msg}}</p>
+                                </div>
+                                <div class="dot-of-chat-page" {{#each ../unseenMsgs}}
+                                    {{#isEqual _id ../userDetails._id }} style="display: inline-block;" {{/isEqual}}
+                                    {{/each}}>
+                                    <i class="fas fa-circle"></i>
+                                </div>
+                            </div>
+                        </a>
+                        {{!-- /Person Chat --}}
+                        {{/each}}
+                    </div>
+                </div>
+                {{!-- mesgs --}}
+                <div class="mesgs">
+                    {{!-- msg_history --}}
+                    <div class="msg_history">
+                    </div>
+                    {{!-- /msg_history --}}
+                    <div id="typing" class="text-muted"></div>
+                    {{!-- type_msg --}}
+                    <div class="type_msg">
+                        <form class="input_msg_write">
+                            <input type="text" name="msg" class="write_msg" placeholder="Type a message" />
+                            <button class="msg_send_btn" type="submit"><i class="fas fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                    {{!-- /type_msg --}}
+                </div>
+                {{!-- /mesgs --}}
+            </div>
+        </div>
+    </div>
+</div>

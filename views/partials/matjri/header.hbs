@@ -8,7 +8,34 @@
                         <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
                         <li><a href="/cart"><i class="fa fa-user"></i> My Cart</a></li>
                         <li><a href="/checkout"><i class="fa fa-user"></i> Checkout</a></li>
-                        <li><a href="/aut/login"><i class="fa fa-user"></i> Login</a></li>
+                        <li><a href="/auth/logout"><i class="fa fa-user"></i> Logout</a></li>
+                        <li class="dropdown dropdown-small">
+                            <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle messages-dropdown"
+                                href="#"><span class="key"></span><i class="far fa-comment-dots"></i>
+                                <span class="messages-notification-alert" {{#if unseenMsgs}}
+                                    style="display: inline-block;" {{/if}}>
+                                    <i class="fas fa-circle"></i>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu chat-box">
+                                {{#each latestTextedUsers}}
+                                <li style="display: block; padding:10px" class="latest-texted-user-list">
+                                    <a href="/chat/{{userDetails._id}}" data-texted="{{userDetails._id}}">
+                                        <h4 href="">{{userDetails.fullName}}</h4>
+                                        <p class="list-msg">{{msg}}</p>
+                                        <small class="list-date" style="color: gray;">{{date}}</small>
+                                        <span class="text-sm text-danger dot-chat-list">
+                                            {{#each ../unseenMsgs}}
+                                            {{#isEqual  _id ../userDetails._id }}
+                                            {{count}}
+                                            {{/isEqual}}
+                                            {{/each}}
+                                        </span>
+                                    </a>
+                                </li>
+                                {{/each}}
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>
