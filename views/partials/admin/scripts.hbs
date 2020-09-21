@@ -106,8 +106,8 @@
         })
 
     // Listen to Messages
-    chatSocket.on('chatMsg', ({ msg, date }) => {
-        incomingMsg(msg, date, 'bottom');
+    chatSocket.on('chatMsg', ({ msg, date, image }) => {
+        incomingMsg(msg, date, image, 'bottom');
         messageHistory.scrollTop = messageHistory.scrollHeight;
     });
 
@@ -145,7 +145,7 @@
         if (read) {
             const readDiv = document.querySelector('.outgoing_msg:last-child .read')
             readDiv.setAttribute('data-read', 'true')
-            readDiv.innerHTML = 'seen';
+            readDiv.innerHTML = '<i class="icon-double-check"></i>';
         }
     })
     chatSocket.on('chatOpen', () => {
@@ -153,16 +153,19 @@
         readDivS.forEach(r => {
             if (r.getAttribute('data-read') === 'false') {
                 r.setAttribute('data-read', 'true')
-                r.innerHTML = 'seen';
+                r.innerHTML = '<i class="icon-double-check"></i>';
             }
         })
     })
 
     //outoutMessage
-    function incomingMsg(msg, date, postion = 'top') {
+    function incomingMsg(msg, date, image, postion = 'top') {
         const div = document.createElement('div');
         div.classList.add('incoming_msg');
         div.innerHTML = `
+             <div class="incoming_msg_img">
+             <img src="${image}" alt="sunil">
+             </div>
             <div class="received_msg">
             <div class="received_withd_msg">
             <p>${msg}</p>
@@ -177,6 +180,8 @@
     function outgoingMsg(msg, date, read, postion = 'top') {
         const div = document.createElement('div');
         div.classList.add('outgoing_msg');
+        if (read) read = '<i class="icon-double-check"></i>'
+        else read = '<i class="icon-check"></i>'
         div.innerHTML = `
         <div class="sent_msg">
             <p>${msg}</p>
@@ -248,12 +253,12 @@
             })
         })
             .then(res => res.json())
-            .then(data => {
-                data.forEach(conv => {
+            .then(({ conversition, image }) => {
+                conversition.forEach(conv => {
                     if (conv.from === from)
                         outgoingMsg(conv.msg, conv.createdAt, conv.read)
                     else
-                        incomingMsg(conv.msg, conv.createdAt)
+                        incomingMsg(conv.msg, conv.createdAt, image)
                 })
                 spinner.remove();
             })

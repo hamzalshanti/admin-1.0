@@ -22,8 +22,7 @@
                         {{!-- Person Chat --}}
                         <a href="{{userDetails._id}}" class="chat_list" style="display: block;">
                             <div class="chat_people">
-                                <div class="chat_img"> <img src="https://ptetutorials.com/images/user-profile.png"
-                                        alt="sunil"> </div>
+                                <div class="chat_img"><img src="{{userDetails.image}}" alt="sunil"></div>
                                 <div class="chat_ib">
                                     <h5>{{userDetails.fullName}}<span class="chat_date">{{date}}</span></h5>
                                     <p class="chat_side_msg">{{msg}}</p>

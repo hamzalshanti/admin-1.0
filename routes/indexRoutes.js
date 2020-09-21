@@ -60,9 +60,15 @@ router.use('/get-messages', async (req, res) => {
       await conv.save();
     }
   });
-  // console.log(conversition);
+  const image = await User.findById(req.body.id).select({
+    image: 1,
+    _id: 0,
+  });
   if (conversition.length === 0) return res.json('No Messges yet');
-  res.json(conversition.map((c) => c.toJSON()));
+  res.json({
+    conversition: conversition.map((c) => c.toJSON()),
+    image: image['image'],
+  });
 });
 
 function formatMsgs(req, chats) {

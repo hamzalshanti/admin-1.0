@@ -21,7 +21,9 @@
                                 {{#each latestTextedUsers}}
                                 <li style="display: block; padding:10px" class="latest-texted-user-list">
                                     <a href="/chat/{{userDetails._id}}" data-texted="{{userDetails._id}}">
-                                        <h4 href="">{{userDetails.fullName}}</h4>
+                                        <img src="{{userDetails.image}}" alt=""
+                                            style="width: 35px; height:35px; border-radius:50%">
+                                        <span>{{userDetails.fullName}}</span>
                                         <p class="list-msg">{{msg}}</p>
                                         <small class="list-date" style="color: gray;">{{date}}</small>
                                         <span class="text-sm text-danger dot-chat-list">

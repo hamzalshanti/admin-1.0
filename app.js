@@ -141,6 +141,10 @@ io.on('connection', (socket) => {
       from: chat.from,
       to: chat.to,
     });
+    const image = await User.findById(chat.from).select({
+      image: 1,
+      _id: 0,
+    });
     // Check Two In chat
     if (chatRoom)
       if (io.sockets.adapter.rooms[chatRoom].length === 2) {
@@ -150,6 +154,7 @@ io.on('connection', (socket) => {
     socket.to(chatRoom).emit('chatMsg', {
       msg: newChat.msg,
       date: newChat.date,
+      image: image['image'],
     });
   });
   socket.on('read', () => {
