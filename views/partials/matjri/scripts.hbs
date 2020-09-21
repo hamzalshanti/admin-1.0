@@ -185,15 +185,20 @@
     chatLists.forEach((element) => {
         element.onclick = async function (e) {
             e.preventDefault();
-            to = element.getAttribute('href');
+            chatSocket.emit('leaveRoom');
 
+            //Active
+            chatLists.forEach(active => {
+                active.classList.remove('active_chat')
+            })
+            element.classList.add('active_chat');
+
+            to = element.getAttribute('href');
             // Emit Join Chat
             chatSocket.emit('joinChat', {
                 from,
                 to,
             });
-
-            element.classList.add('active_chat');
             element.querySelector('.dot-of-chat-page').style.display = 'none';
             messageHistory.innerHTML = '';
             id_to = this.getAttribute('href')
@@ -215,29 +220,30 @@
     if (form)
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            const msg = e.target.elements.msg.value;
+            const msg = e.target.elements.msg.value.trim();
+            if (msg != '') {
+                // Socket Emit Msg to Server
+                chatSocket.emit('chatMsg', {
+                    msg,
+                    from,
+                    to,
+                });
 
-            // Socket Emit Msg to Server
-            chatSocket.emit('chatMsg', {
-                msg,
-                from,
-                to,
-            });
+                //Emit Notification Theres a message
+                chatSocket.emit('msgNotification', {
+                    msg,
+                    from,
+                    to
+                })
 
-            //Emit Notification Theres a message
-            chatSocket.emit('msgNotification', {
-                msg,
-                from,
-                to
-            })
-
-            // Check Seen Or Not 
-            outgoingMsg(msg, Date.now(), false, 'bottom');
-            e.target.elements.msg.value = '';
-            e.target.elements.msg.focus();
-            prependToTop(to, msg);
-            messageHistory.scrollTop = messageHistory.scrollHeight;
-            chatSocket.emit('read');
+                // Check Seen Or Not 
+                outgoingMsg(msg, Date.now(), false, 'bottom');
+                e.target.elements.msg.value = '';
+                e.target.elements.msg.focus();
+                prependToTop(to, msg);
+                messageHistory.scrollTop = messageHistory.scrollHeight;
+                chatSocket.emit('read');
+            }
         })
 
     // Listen to Messages
@@ -372,6 +378,7 @@
                 showSpinner()
                 skip += 10
                 chunkOfData(id_to, skip)
+                this.scrollTop = 10
             }
         });
 
@@ -401,6 +408,7 @@
 
     //on load
     window.onload = function () {
+        document.querySelector('.inbox_chat').firstElementChild.click()
         const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
         chatLists.forEach(c => {
             if (c.getAttribute('href') === getLastItem(window.location.href)) {
@@ -408,6 +416,7 @@
                 history.pushState('', ' ', 'messages')
             }
         })
+
     }
 
     const messageIcon = document.querySelector('.messages-dropdown')

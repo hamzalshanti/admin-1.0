@@ -8,7 +8,11 @@
                         <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
                         <li><a href="/cart"><i class="fa fa-user"></i> My Cart</a></li>
                         <li><a href="/checkout"><i class="fa fa-user"></i> Checkout</a></li>
+
+                        {{#if isLogin}}
                         <li><a href="/auth/logout"><i class="fa fa-user"></i> Logout</a></li>
+                        {{/if}}
+                        {{#if isBuyer}}
                         <li class="dropdown dropdown-small">
                             <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle messages-dropdown"
                                 href="#"><span class="key"></span><i class="far fa-comment-dots"></i>
@@ -37,6 +41,7 @@
                                 </li>
                                 {{/each}}
                             </ul>
+                            {{/if}}
                         </li>
                     </ul>
                 </div>

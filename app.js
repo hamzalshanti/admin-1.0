@@ -78,6 +78,8 @@ app.use(passport.session());
 //create Global Variable
 app.use(async (req, res, next) => {
   if (req.user) {
+    res.locals.isLogin = true;
+    if (req.user.position === 'buyer') res.locals.isBuyer = true;
     res.locals.latestTextedUsers = await getLatestTextedUsers(req);
     res.locals.unseenMsgs = await getUnseenMsgs(req);
   }
@@ -126,7 +128,6 @@ io.on('connection', (socket) => {
     socket.join(notiRoom);
   });
   socket.on('joinChat', (info) => {
-    socket.leave(chatRoom);
     if (info.from < info.to) chatRoom = info.from + info.to;
     else chatRoom = info.to + info.from;
     socket.join(chatRoom);
@@ -136,29 +137,32 @@ io.on('connection', (socket) => {
       }
   });
   socket.on('chatMsg', async (chat) => {
-    const newChat = new Chat({
-      msg: chat.msg,
-      from: chat.from,
-      to: chat.to,
-    });
-    const image = await User.findById(chat.from).select({
-      image: 1,
-      _id: 0,
-    });
-    // Check Two In chat
-    if (chatRoom)
-      if (io.sockets.adapter.rooms[chatRoom].length === 2) {
-        newChat.read = true;
-      }
-    await newChat.save();
-    socket.to(chatRoom).emit('chatMsg', {
-      msg: newChat.msg,
-      date: newChat.date,
-      image: image['image'],
-    });
+    chat.msg = chat.msg.trim();
+    if (chat.msg != '') {
+      const newChat = new Chat({
+        msg: chat.msg,
+        from: chat.from,
+        to: chat.to,
+      });
+      const image = await User.findById(chat.from).select({
+        image: 1,
+        _id: 0,
+      });
+      // Check Two In chat
+      if (chatRoom)
+        if (io.sockets.adapter.rooms[chatRoom].length === 2) {
+          newChat.read = true;
+        }
+      await newChat.save();
+      socket.to(chatRoom).emit('chatMsg', {
+        msg: newChat.msg,
+        date: newChat.date,
+        image: image['image'],
+      });
+    }
   });
   socket.on('read', () => {
-    if (chatRoom)
+    if (io.sockets.adapter.rooms[chatRoom])
       if (io.sockets.adapter.rooms[chatRoom].length === 2)
         return socket.emit('read', true);
 
@@ -181,5 +185,8 @@ io.on('connection', (socket) => {
       msg: data.msg,
       appendDotNoti: appendDotNoti,
     });
+  });
+  socket.on('leaveRoom', () => {
+    console.log('LeaveRoom');
   });
 });

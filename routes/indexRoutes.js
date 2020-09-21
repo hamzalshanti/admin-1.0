@@ -15,6 +15,7 @@ const {
   chat_page,
 } = require('../controllers/indexController');
 const { siteGuard } = require('../middlewares/authMiddleware');
+const { buyerChatGuard } = require('../middlewares/chatMiddleware');
 const mongoose = require('mongoose');
 const Cart = require('../models/cartModel');
 const Product = require('../models/productModel');
@@ -32,8 +33,8 @@ router.post('/add-to-cart/:id', add_to_cart);
 router.post('/cart/coupon', add_coupon);
 router.post('/cart/update', update_cart);
 router.get('/cart/delete/:id', delete_cart_item);
-router.get('/chat', siteGuard, chat_page);
-router.get('/chat/:id', siteGuard, chat_page);
+router.get('/chat', siteGuard, buyerChatGuard, chat_page);
+router.get('/chat/:id', siteGuard, buyerChatGuard, chat_page);
 
 router.use('/get-messages', async (req, res) => {
   const conversition = await Chat.find({

@@ -16,6 +16,7 @@ const {
   adminGuard,
   registerGuard,
 } = require('../../middlewares/authMiddleware');
+const { adminChatGuard } = require('../../middlewares/chatMiddleware');
 
 const Chat = require('../../models/chatModel');
 
@@ -40,7 +41,7 @@ router.use('/category', categoryRoutes);
 router.use('/user', userRoutes);
 router.use('/tag', tagRoutes);
 router.use('/coupon', couponRoutes);
-router.get('/chat', chat_page);
-router.get('/chat/:id', chat_page);
+router.get('/chat', adminChatGuard, chat_page);
+router.get('/chat/:id', adminChatGuard, chat_page);
 
 module.exports = router;
