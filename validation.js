@@ -20,10 +20,15 @@ const singupValidation = [
 ];
 
 const productValidation = [
-  body('productName').trim().notEmpty().withMessage('name can not be empty'),
-  body('productPrice').trim().isNumeric().withMessage('Must Number'),
-  body('productQty').trim().isNumeric().withMessage('Qty must be number'),
-  body('productDescription')
+  body('name_en').trim().notEmpty().withMessage('name can not be empty'),
+  body('name_ar').trim().notEmpty().withMessage('name can not be empty'),
+  body('price').trim().isNumeric().withMessage('Must Number'),
+  body('qty').trim().isNumeric().withMessage('Qty must be number'),
+  body('description_en')
+    .trim()
+    .notEmpty()
+    .withMessage('Description can not be empty'),
+  body('description_ar')
     .trim()
     .notEmpty()
     .withMessage('Description can not be empty'),
@@ -37,14 +42,27 @@ const productValidation = [
 ];
 
 const categoryValidation = [
-  body('categoryName')
+  body('name_en')
     .trim()
     .notEmpty()
     .withMessage('category name cannot be empty'),
-  body('categoryDescription')
+  body('description_en')
     .trim()
     .notEmpty()
     .withMessage('category description cannot be empty'),
+  body('name_ar')
+    .trim()
+    .notEmpty()
+    .withMessage('category name cannot be empty'),
+  body('description_ar')
+    .trim()
+    .notEmpty()
+    .withMessage('category description cannot be empty'),
+];
+
+const tagValidation = [
+  body('name_en').trim().notEmpty().withMessage('tag name cannot be empty'),
+  body('name_ar').trim().notEmpty().withMessage('tag name cannot be empty'),
 ];
 
 const couponValidation = [
@@ -68,4 +86,5 @@ module.exports = {
   productValidation,
   categoryValidation,
   couponValidation,
+  tagValidation,
 };

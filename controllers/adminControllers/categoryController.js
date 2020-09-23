@@ -1,5 +1,5 @@
 const Category = require('../../models/categoryModel');
-const { getErrorsObject } = require('../../functions/authFn');
+const CategoryTranslation = require('../../models/categoryTranslationModel');
 const { validationResult } = require('express-validator');
 const { show_items } = require('../../functions/adminFunctions/commonFn');
 const {
@@ -7,6 +7,8 @@ const {
   display_edit_category_page,
   add_category,
   edit_category,
+  formatEditInputs,
+  getFields,
 } = require('../../functions/adminFunctions/categoryFn');
 
 const type = 'category';
@@ -52,7 +54,7 @@ const get_add_category = async (req, res) => {
  * @param {object} res - reponse object
  */
 const get_edit_category = async (req, res) => {
-  const item = await Category.findById(req.params.id);
+  const item = await formatEditInputs(req.params.id);
   page = 'Edit';
   display_edit_category_page({ req, res, type, item, page });
 };
@@ -65,10 +67,7 @@ const get_edit_category = async (req, res) => {
  * @param {object} res - reponse object
  */
 const post_add_category = async (req, res) => {
-  const fields = {
-    categoryName: req.body.categoryName,
-    categoryDescription: req.body.categoryDescription,
-  };
+  const fields = getFields(req);
   add_category({ req, res, type, fields });
 };
 
@@ -80,10 +79,7 @@ const post_add_category = async (req, res) => {
  * @param {object} res - reponse object
  */
 const put_edit_category = async (req, res) => {
-  const fields = {
-    categoryName: req.body.categoryName,
-    categoryDescription: req.body.categoryDescription,
-  };
+  const fields = getFields(req);
   await edit_category({ req, res, type, fields });
 };
 

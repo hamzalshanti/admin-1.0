@@ -35,19 +35,26 @@
               <div class="card-body">
 
                 <div class="form-group">
-                  <label for="productName">Product Name</label>
-                  <input type="text" class="form-control" name="productName" id="productName"
-                    placeholder="Enter Product Name" value="{{item.productName}}">
-                  <small style="color: red">{{errorObject.productName}}</small>
+                  <label for="productName">Name (English)</label>
+                  <input type="text" class="form-control" name="name_en" id="productName"
+                    placeholder="Enter Product Name" value="{{item.name_en}}">
+                  <small style="color: red">{{errorObject.name_en}}</small>
                 </div>
+                {{!-- /form-group --}}
 
+                <div class="form-group">
+                  <label for="productName">Name (Arabic)</label>
+                  <input type="text" class="form-control" name="name_ar" id="productName"
+                    placeholder="Enter Product Name" value="{{item.name_ar}}">
+                  <small style="color: red">{{errorObject.name_ar}}</small>
+                </div>
                 {{!-- /form-group --}}
 
                 <div class="form-group">
                   <label for="productPrice">Price</label>
-                  <input type="text" class="form-control" name="productPrice" id="productPrice"
-                    placeholder="Enter Price In Dollar" value="{{item.productPrice}}">
-                  <small style="color: red">{{errorObject.productPrice}}</small>
+                  <input type="text" class="form-control" name="price" id="productPrice"
+                    placeholder="Enter Price In Dollar" value="{{item.price}}">
+                  <small style="color: red">{{errorObject.price}}</small>
                 </div>
                 {{!-- /form-group --}}
 
@@ -61,18 +68,26 @@
                 {{!-- /form-group --}}
 
                 <div class="form-group">
-                  <label for="productQty">Product Quntity</label>
-                  <input type="text" class="form-control" name="productQty" id="productQty"
-                    placeholder="Enter Product Qunitiy" value="{{item.productQty}}">
-                  <small style="color: red">{{errorObject.productQty}}</small>
+                  <label for="productQty">Quntity</label>
+                  <input type="text" class="form-control" name="qty" id="productQty" placeholder="Enter Product Qunitiy"
+                    value="{{item.qty}}">
+                  <small style="color: red">{{errorObject.qty}}</small>
                 </div>
                 {{!-- /form-group --}}
 
                 <div class="form-group">
-                  <label for="productDescription">Product Description</label>
-                  <textarea name="productDescription" id="productDescription"
-                    class="form-control">{{item.productDescription}}</textarea>
-                  <small style="color: red">{{errorObject.productDescription}}</small>
+                  <label for="productDescription">Description</label>
+                  <textarea name="description_en" id="productDescription"
+                    class="form-control">{{item.description_en}}</textarea>
+                  <small style="color: red">{{errorObject.description_en}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="productDescription">Description (Arabic)</label>
+                  <textarea name="description_ar" id="productDescription"
+                    class="form-control">{{item.description_ar}}</textarea>
+                  <small style="color: red">{{errorObject.description_ar}}</small>
                 </div>
                 {{!-- /form-group --}}
 
@@ -109,10 +124,10 @@
                 {{!-- /form-group --}}
 
                 <div class="form-group">
-                  <label for="exampleInputFile">Product Gallary</label>
+                  <label for="exampleInputFile">Gallary</label>
                   <div class="input-group">
                     <div class="custom-file">
-                      <input type="file" name="productGallary" class="form-control" id="exampleInputFile" multiple>
+                      <input type="file" name="gallary" class="form-control" id="exampleInputFile" multiple>
                       {{!-- <label class="custom-file-label" for="exampleInputFile">Choose Image</label> --}}
                     </div>
                     {{!-- <div class="input-group-append">
@@ -123,7 +138,7 @@
                 {{!-- /form-group --}}
 
                 <div class="form-group">
-                  <label for="productTags">Product Tags</label>
+                  <label for="productTags">Tags</label>
                   <input name="tags" id="tags" value="{{tags}}" />
                 </div>
                 {{!-- /form-group --}}
@@ -136,7 +151,7 @@
                 <button type="submit" class="btn btn-primary">{{formTitle}}</button>
               </div>
 
-              <input type="hidden" name="itemId" value="{{item._id}}">
+              <input type="hidden" name="itemId" value="{{item.id}}">
             </form>
           </div>
           <!-- /.card -->

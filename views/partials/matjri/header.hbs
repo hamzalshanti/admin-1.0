@@ -4,13 +4,12 @@
             <div class="col-md-8">
                 <div class="user-menu">
                     <ul>
-                        <li><a href="#"><i class="fa fa-user"></i> My Account</a></li>
-                        <li><a href="#"><i class="fa fa-heart"></i> Wishlist</a></li>
-                        <li><a href="/cart"><i class="fa fa-user"></i> My Cart</a></li>
-                        <li><a href="/checkout"><i class="fa fa-user"></i> Checkout</a></li>
+                        <li><a href="#"><i class="fa fa-user"></i>{{dictionary.header.my_account}}</a></li>
+                        <li><a href="#"><i class="fa fa-heart"></i> {{dictionary.header.wishlist}}</a></li>
+                        <li><a href="/cart"><i class="fa fa-user"></i> {{dictionary.header.cart}}</a></li>
 
                         {{#if isLogin}}
-                        <li><a href="/auth/logout"><i class="fa fa-user"></i> Logout</a></li>
+                        <li><a href="/auth/logout"><i class="fa fa-user"></i> {{dictionary.header.logout}}</a></li>
                         {{/if}}
                         {{#if isBuyer}}
                         <li class="dropdown dropdown-small">
@@ -52,7 +51,7 @@
                     <ul class="list-unstyled list-inline">
                         <li class="dropdown dropdown-small">
                             <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#"><span
-                                    class="key">currency :</span><span class="value">USD </span><b
+                                    class="key">{{dictionary.header.currency}} :</span><span class="value">USD </span><b
                                     class="caret"></b></a>
                             <ul class="dropdown-menu">
                                 <li><a href="#">USD</a></li>
@@ -63,12 +62,12 @@
 
                         <li class="dropdown dropdown-small">
                             <a data-toggle="dropdown" data-hover="dropdown" class="dropdown-toggle" href="#"><span
-                                    class="key">language :</span><span class="value">English </span><b
-                                    class="caret"></b></a>
+                                    class="key">{{dictionary.header.language.title}} :</span><span
+                                    class="value">{{dictionary.header.language.en}}
+                                </span><b class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">English</a></li>
-                                <li><a href="#">French</a></li>
-                                <li><a href="#">German</a></li>
+                                <li class="_locals" data-local="en">{{dictionary.header.language.en}}</li>
+                                <li class="_locals" data-local="ar">{{dictionary.header.language.ar}}</li>
                             </ul>
                         </li>
                     </ul>
@@ -111,14 +110,12 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="/">Home</a></li>
-                    <li><a href="/shop">Shop page</a></li>
-                    <li><a href="/single-product">Single product</a></li>
-                    <li><a href="/cart">Cart</a></li>
-                    <li><a href="/checkout">Checkout</a></li>
-                    <li><a href="#">Category</a></li>
-                    <li><a href="#">Others</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li class="active"><a href="/">{{dictionary.nav.home}}</a></li>
+                    <li><a href="/shop">{{dictionary.nav.shop}}</a></li>
+                    <li><a href="/cart">{{dictionary.nav.cart}}</a></li>
+                    <li><a href="/checkout">{{dictionary.nav.checkout}}</a></li>
+                    <li><a href="#">{{dictionary.nav.category}}</a></li>
+                    <li><a href="#">{{dictionary.nav.contact}}</a></li>
                 </ul>
             </div>
         </div>

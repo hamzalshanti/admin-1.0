@@ -13,6 +13,7 @@ const {
   update_cart,
   delete_cart_item,
   chat_page,
+  get_messages,
 } = require('../controllers/indexController');
 const { siteGuard } = require('../middlewares/authMiddleware');
 const { buyerChatGuard } = require('../middlewares/chatMiddleware');
@@ -35,50 +36,6 @@ router.post('/cart/update', update_cart);
 router.get('/cart/delete/:id', delete_cart_item);
 router.get('/chat', siteGuard, buyerChatGuard, chat_page);
 router.get('/chat/:id', siteGuard, buyerChatGuard, chat_page);
-
-router.use('/get-messages', async (req, res) => {
-  const conversition = await Chat.find({
-    $and: [
-      {
-        $or: [
-          { from: req.user._id.toString() },
-          { to: req.user._id.toString() },
-        ],
-      },
-      {
-        $or: [{ from: req.body.id }, { to: req.body.id }],
-      },
-    ],
-  })
-    .sort({
-      createdAt: -1,
-    })
-    .skip(req.body.skip)
-    .limit(10);
-  conversition.forEach(async (conv) => {
-    if (req.user._id.toString() === conv.to && conv.read === false) {
-      conv.read = true;
-      await conv.save();
-    }
-  });
-  const image = await User.findById(req.body.id).select({
-    image: 1,
-    _id: 0,
-  });
-  if (conversition.length === 0) return res.json('No Messges yet');
-  res.json({
-    conversition: conversition.map((c) => c.toJSON()),
-    image: image['image'],
-  });
-});
-
-function formatMsgs(req, chats) {
-  chats = chats.map((msg) => msg.toJSON());
-  chats.forEach((chat) => {
-    if (chat.sender.toString() === req.user._id.toString())
-      chat.outgoing = true;
-  });
-  return chats;
-}
+router.post('/get-messages', get_messages);
 
 module.exports = router;

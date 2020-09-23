@@ -1,11 +1,13 @@
 const Product = require('../models/productModel');
 const Rate = require('../models/rateModel');
+const User = require('../models/userModel');
 const Tag = require('../models/tagModel');
 const Cart = require('../models/cartModel');
 const Coupon = require('../models/couponModel');
 const Chat = require('../models/chatModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
 const getLatestTextedUsers = require('../functions/getLatestUserTexted');
+
 /**
  * Index controllers of Route: /
  */
@@ -22,6 +24,7 @@ const get_index = async (req, res) => {
   res.render('matjri/index', {
     title: 'Home',
     recentProducts: recentProducts.map((product) => product.toJSON()),
+    dictionary: require('../config/lang')(req.cookies._local),
   });
 };
 
@@ -214,6 +217,42 @@ const chat_page = async (req, res) => {
   }
 };
 
+const get_messages = async (req, res) => {
+  const conversition = await Chat.find({
+    $and: [
+      {
+        $or: [
+          { from: req.user._id.toString() },
+          { to: req.user._id.toString() },
+        ],
+      },
+      {
+        $or: [{ from: req.body.id }, { to: req.body.id }],
+      },
+    ],
+  })
+    .sort({
+      createdAt: -1,
+    })
+    .skip(req.body.skip)
+    .limit(10);
+  conversition.forEach(async (conv) => {
+    if (req.user._id.toString() === conv.to && conv.read === false) {
+      conv.read = true;
+      await conv.save();
+    }
+  });
+  const image = await User.findById(req.body.id).select({
+    image: 1,
+    _id: 0,
+  });
+  if (conversition.length === 0) return res.json('No Messges yet');
+  res.json({
+    conversition: conversition.map((c) => c.toJSON()),
+    image: image['image'],
+  });
+};
+
 /** Get recent products */
 async function getRecentProducts(limit) {
   const product = await Product.find({}).sort({ createdAt: -1 }).limit(limit);
@@ -233,4 +272,5 @@ module.exports = {
   update_cart,
   delete_cart_item,
   chat_page,
+  get_messages,
 };

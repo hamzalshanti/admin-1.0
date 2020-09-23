@@ -6,7 +6,6 @@ const userRoutes = require('./userRoutes');
 const tagRoutes = require('./tagRoutes');
 const couponRoutes = require('./couponRoutes');
 const passport = require('passport');
-const mongoose = require('mongoose');
 const {
   show_dashboard,
   admin_login,

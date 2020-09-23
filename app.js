@@ -6,6 +6,7 @@ const exphbs = require('express-handlebars');
 const passport = require('passport');
 const flash = require('connect-flash');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const methodOverride = require('method-override');
 const mongoStore = require('connect-mongo')(session);
 const path = require('path');
@@ -54,6 +55,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // View Setting
 app.engine(

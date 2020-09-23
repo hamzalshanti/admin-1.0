@@ -51,6 +51,8 @@
                                     <tr>
                                         <td>{{name}}</td>
                                         <td>
+                                            <a href="/admin-panel/tag/edit/{{_id}}" type="button"
+                                                class="btn btn-info"><i class="fas fa-edit"></i></a>
                                             <form action="/admin-panel/tag/show?_method=DELETE" method="POST"
                                                 class="d-inline-block" id="myForm">
                                                 <input type="hidden" name="id" value="{{_id}}">

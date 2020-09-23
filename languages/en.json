@@ -1,0 +1,22 @@
+{
+  "header": {
+    "my_account": "My Account",
+    "wishlist": "Wishlist",
+    "cart": "Cart",
+    "logout": "Logout",
+    "currency": "Currency",
+    "language": {
+      "title": "Language",
+      "en": "English",
+      "ar": "Arabic"
+    }
+  },
+  "nav": {
+    "home": "HOME",
+    "shop": "SHOP PAGE",
+    "cart": "CART",
+    "checkout": "CHECKOUT",
+    "category": "CATEGORY",
+    "contact": "CONTACT"
+  }
+}

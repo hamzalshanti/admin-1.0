@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const tagSchema = mongoose.Schema({
-  name: {
-    type: String,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 const Tag = mongoose.model('tag', tagSchema);

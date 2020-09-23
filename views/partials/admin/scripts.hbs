@@ -275,7 +275,8 @@
 
     //on load
     window.onload = function () {
-        document.querySelector('.inbox_chat').firstElementChild.click()
+        if (document.querySelector('.inbox_chat'))
+            document.querySelector('.inbox_chat').firstElementChild.click()
         const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
         chatLists.forEach(c => {
             if (c.getAttribute('href') === getLastItem(window.location.href)) {

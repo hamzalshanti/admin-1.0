@@ -1,84 +1,91 @@
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Category</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">General Form</li>
-            </ol>
-          </div>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Category</h1>
         </div>
-      </div><!-- /.container-fluid -->
-    </section>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">General Form</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
 
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <!-- left column -->
-          <div class="col-md-12">
-            <!-- general form elements -->
-            <div class="card card-primary">
-              <div class="card-header">
-                <h3 class="card-title">{{formTitle}}</h3>
-              </div>
-              <!-- /.card-header -->
-              <!-- form start -->
-              <form 
-              {{#if isEdit}} 
-              action="/admin-panel/category/edit?_method=PUT"
-              {{/if}}
-              method="post">
-                <div class="card-body">
-                  <div class="form-group">
-                    <label for="categoryName">Category Name</label>
-                    <input 
-                    type="text" 
-                    class="form-control" 
-                    name="categoryName" 
-                    id="categoryName" 
-                    placeholder="Enter Category Name"
-                    value="{{item.categoryName}}">
-                    <small style="color: red">{{errorObject.categoryName}}</small>
-                  </div>
-                  {{!-- /form-group --}}
-
-
-                  <div class="form-group">
-                    <label for="categoryDescription">Category Description</label>
-                    <textarea 
-                    name="categoryDescription"
-                    id="categoryDescription" 
-                    class="form-control">{{item.categoryDescription}}</textarea>
-                    <small style="color: red">{{errorObject.categoryDescription}}</small>
-                  </div>
-                  {{!-- /form-group --}}
-
-                </div>
-                <!-- /.card-body -->
-                <div class="card-footer">
-                  <button type="submit" class="btn btn-primary">{{formTitle}}</button>
-                </div>
-                <input type="hidden" name="itemId" value="{{item._id}}">
-              </form>
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- left column -->
+        <div class="col-md-12">
+          <!-- general form elements -->
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">{{formTitle}}</h3>
             </div>
-            <!-- /.card -->
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form {{#if isEdit}} action="/admin-panel/category/edit?_method=PUT" {{/if}} method="post">
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="categoryName">Name (English)</label>
+                  <input type="text" class="form-control" name="name_en" id="categoryName"
+                    placeholder="Enter Category Name" value="{{item.name_en}}">
+                  <small style="color: red">{{errorObject.name_en}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <div class="form-group">
+                  <label for="categoryDescription">Description (English)</label>
+                  <textarea name="description_en" id="categoryDescription"
+                    class="form-control">{{item.description_en}}</textarea>
+                  <small style="color: red">{{errorObject.description_en}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+                <hr>
+
+                <div class="form-group">
+                  <label for="categoryName">Name (Arabic)</label>
+                  <input type="text" class="form-control" name="name_ar" id="categoryName"
+                    placeholder="Enter Category Name" value="{{item.name_ar}}">
+                  <small style="color: red">{{errorObject.name_ar}}</small>
+                </div>
+                {{!-- /form-group --}}
 
 
+                <div class="form-group">
+                  <label for="categoryDescription">Description (Arabic)</label>
+                  <textarea name="description_ar" id="categoryDescription"
+                    class="form-control">{{item.description_ar}}</textarea>
+                  <small style="color: red">{{errorObject.description_ar}}</small>
+                </div>
+                {{!-- /form-group --}}
+
+              </div>
+              <!-- /.card-body -->
+              <div class="card-footer">
+                <button type="submit" class="btn btn-primary">{{formTitle}}</button>
+              </div>
+              <input type="hidden" name="itemId" value="{{item.id}}">
+            </form>
           </div>
-          <!--/.col -->
+          <!-- /.card -->
+
+
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
-  {{>admin/scripts}}
+        <!--/.col -->
+
+      </div>
+      <!-- /.row -->
+    </div><!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+{{>admin/scripts}}

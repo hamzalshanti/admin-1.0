@@ -22,6 +22,17 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
+
+<script>
+    const _locals = document.querySelectorAll('._locals');
+    _locals.forEach(_local => {
+        _local.onclick = function (e) {
+            document.cookie = "_local=" + _local.getAttribute('data-local');
+            location.reload();
+        }
+    })
+</script>
+
 <script>
 
     /** Reviewing */
@@ -408,7 +419,8 @@
 
     //on load
     window.onload = function () {
-        document.querySelector('.inbox_chat').firstElementChild.click()
+        if (document.querySelector('.inbox_chat'))
+            document.querySelector('.inbox_chat').firstElementChild.click()
         const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
         chatLists.forEach(c => {
             if (c.getAttribute('href') === getLastItem(window.location.href)) {

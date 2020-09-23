@@ -8,6 +8,8 @@ const {
   display_edit_product_page,
   add_product,
   edit_product,
+  formatEditInputs,
+  getFields,
 } = require('../../functions/adminFunctions/productFn');
 
 const type = 'product';
@@ -55,7 +57,10 @@ const get_add_product = async (req, res) => {
  */
 const get_edit_product = async (req, res) => {
   const arrayType = await Category.find();
-  const item = await Product.findById(req.params.id);
+  const item = {
+    ...(await Product.findById(req.params.id)).toJSON(),
+    ...(await formatEditInputs(req.params.id)),
+  };
   page = 'Edit';
   display_edit_product_page({ req, res, type, item, page, arrayType });
 };
@@ -68,14 +73,7 @@ const get_edit_product = async (req, res) => {
  * @param {object} res - reponse object
  */
 const post_add_product = async (req, res) => {
-  const fields = {
-    productName: req.body.productName,
-    productPrice: req.body.productPrice,
-    productQty: req.body.productQty,
-    productDescription: req.body.productDescription,
-    category: req.body.category,
-    discount: req.body.discount,
-  };
+  const fields = getFields(req);
   add_product({ req, res, type, fields });
 };
 
@@ -87,15 +85,7 @@ const post_add_product = async (req, res) => {
  * @param {object} res - reponse object
  */
 const put_edit_product = async (req, res) => {
-  const fields = {
-    productName: req.body.productName,
-    productPrice: req.body.productPrice,
-    productQty: req.body.productQty,
-    productDescription: req.body.productDescription,
-    category: req.body.category,
-    discount: req.body.discount,
-    tags: req.body.tags,
-  };
+  const fields = getFields(req);
   await edit_product({ req, res, type, fields });
 };
 

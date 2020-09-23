@@ -16,7 +16,7 @@ const upload = uploader.fields([
     maxCount: 1,
   },
   {
-    name: 'productGallary',
+    name: 'gallary',
     maxCount: 5,
   },
 ]);
