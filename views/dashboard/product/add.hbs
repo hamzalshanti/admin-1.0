@@ -94,18 +94,18 @@
                 <div class="form-group">
                   <label for="category">Select Category</label>
                   <select name="category" id="category" class="form-control">
-                    <option value="5f3914ffee318a20ac5eec3b" selected>uncategorized</option>
+                    <option value="" selected>uncategorized</option>
                     {{#if item}}
                     {{#each arrayType}}
-                    {{#isEqual ../item.category _id}}
-                    <option value="{{_id}}" selected>{{categoryName}}</option>
+                    {{#isEqual ../item.category category}}
+                    <option value="{{category}}" selected>{{name}}</option>
                     {{else}}
-                    <option value="{{_id}}">{{categoryName}}</option>
+                    <option value="{{category}}">{{name}}</option>
                     {{/isEqual}}
                     {{/each}}
                     {{else}}
                     {{#each arrayType}}
-                    <option value="{{_id}}">{{categoryName}}</option>
+                    <option value="{{category}}">{{name}}</option>
                     {{/each}}
                     {{/if}}
                   </select>
@@ -137,12 +137,35 @@
                 </div>
                 {{!-- /form-group --}}
 
+
                 <div class="form-group">
-                  <label for="productTags">Tags</label>
-                  <input name="tags" id="tags" value="{{tags}}" />
+                  <label for="category">Select Tags</label>
+                  <div>
+                    {{#if item}}
+                    {{#each tags}}
+                    {{#filterTags ../item.tags tag}}
+                    <label class="mr-3">
+                      <input type="checkbox" name="tags[]" value="{{tag}}" checked>
+                      {{name}}
+                    </label>
+                    {{else}}
+                    <label class="mr-3">
+                      <input type="checkbox" name="tags[]" value="{{tag}}">
+                      {{name}}
+                    </label>
+                    {{/filterTags}}
+                    {{/each}}
+                    {{else}}
+                    {{#each tags}}
+                    <label class="mr-3">
+                      <input type="checkbox" name="tags[]" value="{{tag}}">
+                      {{name}}
+                    </label>
+                    {{/each}}
+                    {{/if}}
+                  </div>
                 </div>
                 {{!-- /form-group --}}
-
 
               </div>
               <!-- /.card-body -->

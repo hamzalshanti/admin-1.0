@@ -1,100 +1,101 @@
-
-
-  <!-- Content Wrapper. Contains page content -->
-  <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
-        <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Products</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">DataTables</li>
-            </ol>
-          </div>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Products</h1>
         </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item active">DataTables</li>
+          </ol>
+        </div>
+      </div>
       {{#if success}}
       <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <strong>{{success}}</strong> 
+        <strong>{{success}}</strong>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       {{/if}}
-      </div><!-- /.container-fluid -->
-    </section>
+    </div><!-- /.container-fluid -->
+  </section>
 
 
 
-    <!-- Main content -->
-    <section class="content">
-      <div class="container-fluid">
-        <div class="row">
-          <div class="col-12">
+  <!-- Main content -->
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
 
-            <div class="card">
-              <div class="card-header">
-                <h3 class="card-title">DataTable with default features</h3>
-              </div>
-              <!-- /.card-header -->
-              <div class="card-body">
-                <table id="example1" class="table table-bordered table-striped">
-                  <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Options</th>
-                  </tr>
-                  </thead>
-                  <tbody>
-                    {{#each items}}
-                    <tr>
-                      <td>{{categoryName}}</td>
-                      <td>{{categoryDescription}}</td>
-                      <td>
-                        <a href="/admin-panel/category/edit/{{_id}}" type="button" class="btn btn-info"><i class="fas fa-edit"></i></a>
-                        <form action="/admin-panel/category/show?_method=DELETE" method="POST" class="d-inline-block" id="myForm">
-                          <input type="hidden" name="id" value="{{_id}}">
-                          <button type="submit" class="btn btn-danger" id="deleteBtn"><i class="fas fa-times"></i></button>
-                        </form>
-                      </td>
-                    </tr>
-                    {{/each}}
-                  </tbody>
-                  <tfoot>
-                  <tr>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Options</th>
-                  </tr>
-                  </tfoot>
-                </table>
-              </div>
-              <!-- /.card-body -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">DataTable with default features</h3>
             </div>
-            <!-- /.card -->
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example1" class="table table-bordered table-striped">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Options</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{#each items}}
+                  <tr>
+                    <td>{{name}}</td>
+                    <td>{{description}}</td>
+                    <td>
+                      <a href="/admin-panel/category/edit/{{category}}" type="button" class="btn btn-info"><i
+                          class="fas fa-edit"></i></a>
+                      <form action="/admin-panel/category/show?_method=DELETE" method="POST" class="d-inline-block"
+                        id="myForm">
+                        <input type="hidden" name="id" value="{{category}}">
+                        <button type="submit" class="btn btn-danger" id="deleteBtn"><i
+                            class="fas fa-times"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                  {{/each}}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Options</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
           </div>
-          <!-- /.col -->
+          <!-- /.card -->
         </div>
-        <!-- /.row -->
+        <!-- /.col -->
       </div>
-      <!-- /.container-fluid -->
-    </section>
-    <!-- /.content -->
-  </div>
-  <!-- /.content-wrapper -->
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </section>
+  <!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
 <script>
   var submitLink = document.getElementById('deleteBtn'),
     myForm = document.getElementById('myForm');
-    submitLink.addEventListener('click', function(e) {
-      if (confirm('Are You Sure?')) {
-          myForm.submit();
-      }else{
-        e.preventDefault();
-      }
+  submitLink.addEventListener('click', function (e) {
+    if (confirm('Are You Sure?')) {
+      myForm.submit();
+    } else {
+      e.preventDefault();
+    }
   });
 </script>
 {{>admin/scripts}}

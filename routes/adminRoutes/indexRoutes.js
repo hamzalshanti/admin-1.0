@@ -6,6 +6,7 @@ const userRoutes = require('./userRoutes');
 const tagRoutes = require('./tagRoutes');
 const couponRoutes = require('./couponRoutes');
 const passport = require('passport');
+const TagTranslation = require('../../models/tagTranslationModel');
 const {
   show_dashboard,
   admin_login,
@@ -42,5 +43,14 @@ router.use('/tag', tagRoutes);
 router.use('/coupon', couponRoutes);
 router.get('/chat', adminChatGuard, chat_page);
 router.get('/chat/:id', adminChatGuard, chat_page);
+// router.get('/tags/:word', async (req, res) => {
+//   const tags = await TagTranslation.find({
+//     code: 'en',
+//     name: { $regex: `.*${req.params.word}.*` },
+//   }).select({
+//     _id: 0,
+//   });
+//   res.json(tags);
+// });
 
 module.exports = router;

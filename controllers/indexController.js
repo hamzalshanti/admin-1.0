@@ -1,4 +1,7 @@
 const Product = require('../models/productModel');
+const ProductTranslation = require('../models/productTranslationModel');
+const CategoryTranslation = require('../models/categoryTranslationModel');
+const TagTranslation = require('../models/tagTranslationModel');
 const Rate = require('../models/rateModel');
 const User = require('../models/userModel');
 const Tag = require('../models/tagModel');
@@ -7,6 +10,7 @@ const Coupon = require('../models/couponModel');
 const Chat = require('../models/chatModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
 const getLatestTextedUsers = require('../functions/getLatestUserTexted');
+const mongoose = require('mongoose');
 
 /**
  * Index controllers of Route: /
@@ -20,7 +24,7 @@ const getLatestTextedUsers = require('../functions/getLatestUserTexted');
  * @param {object} res - response object
  */
 const get_index = async (req, res) => {
-  const recentProducts = await getRecentProducts(6);
+  const recentProducts = await getRecentProducts(req.cookies._local, 6);
   res.render('matjri/index', {
     title: 'Home',
     recentProducts: recentProducts.map((product) => product.toJSON()),
@@ -54,9 +58,13 @@ const get_cart = (req, res) => {
  */
 const get_shop = async (req, res) => {
   const { page = 1, limit = 12 } = req.query;
-  const products = await Product.find({})
+  const products = await ProductTranslation.find({
+    code: req.cookies._local || 'en',
+  })
     .limit(limit * 1)
-    .skip((page - 1) * limit);
+    .skip((page - 1) * limit)
+    .populate('product');
+
   const count = await Product.countDocuments();
   let totalPages = Math.ceil(count / limit),
     currentPage = page;
@@ -76,19 +84,35 @@ const get_shop = async (req, res) => {
  * @param {object} res - response object
  */
 const get_single_product = async (req, res) => {
-  const product = await Product.findById(req.params.id)
-    .populate('category', 'categoryName')
-    .populate('tags', 'name');
-
-  /**  Get Related Products Accordinn To Category*/
-  const relatedProducts = await Product.find({
-    category: product.category._id,
+  const product = await ProductTranslation.findOne({
+    code: req.cookies._local || 'en',
+    product: mongoose.Types.ObjectId(req.params.id),
+  }).populate('product');
+  const category = await CategoryTranslation.findOne({
+    code: req.cookies._local || 'en',
+    category: product['product'].category,
+  }).select({
+    name: 1,
+    category: 1,
+  });
+  const tags = await TagTranslation.find({
+    code: req.cookies._local || 'en',
+    tag: {
+      $in: product['product'].tags,
+    },
+  }).select({
+    name: 1,
+  });
+  const relatedProducts = await ProductTranslation.find({
+    code: req.cookies._local || 'en',
   })
-    .nor({ _id: product._id })
+    .nor({
+      product: product['product']._id,
+    })
+    .populate('product')
     .limit(6);
 
-  /**  Get Recent Products*/
-  const recentProducts = await getRecentProducts(4);
+  const recentProducts = await getRecentProducts(req.cookies._local, 4);
 
   /** Get Reviews Details */
   const rates = await Rate.find({ productId: req.params.id });
@@ -98,10 +122,11 @@ const get_single_product = async (req, res) => {
 
   //** Check allowness to review */
   let isOpenReview = await isRateBefore(req);
-
   res.render('matjri/single-product', {
     title: 'Product',
     product: product.toJSON(),
+    category: category.toJSON(),
+    tags: tags.map((tag) => tag.toJSON()),
     relatedProducts: relatedProducts.map((product) => product.toJSON()),
     recentProducts: recentProducts.map((product) => product.toJSON()),
     RateDetails,
@@ -254,9 +279,14 @@ const get_messages = async (req, res) => {
 };
 
 /** Get recent products */
-async function getRecentProducts(limit) {
-  const product = await Product.find({}).sort({ createdAt: -1 }).limit(limit);
-  return product;
+async function getRecentProducts(_local = 'en', limit) {
+  const products = await ProductTranslation.find({
+    code: _local,
+  })
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .populate('product');
+  return products;
 }
 
 module.exports = {

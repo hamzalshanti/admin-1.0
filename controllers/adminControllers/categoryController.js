@@ -1,5 +1,6 @@
 const Category = require('../../models/categoryModel');
 const CategoryTranslation = require('../../models/categoryTranslationModel');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 const { show_items } = require('../../functions/adminFunctions/commonFn');
 const {
@@ -27,7 +28,9 @@ let page = '';
  */
 const get_show_categories = async (req, res) => {
   try {
-    const items = await Category.find();
+    const items = await CategoryTranslation.find({
+      code: 'en',
+    });
     show_items({ req, res, type, items });
   } catch (error) {
     console.log(error);
@@ -93,6 +96,9 @@ const put_edit_category = async (req, res) => {
 const delete_category = async (req, res) => {
   try {
     await Category.findByIdAndDelete(req.body.id);
+    await CategoryTranslation.deleteMany({
+      category: mongoose.Types.ObjectId(req.body.id),
+    });
     res.redirect('/admin-panel/category/show');
   } catch {}
 };

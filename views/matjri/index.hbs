@@ -87,23 +87,24 @@
                         {{!-- single-product --}}
                         <div class="single-product">
                             <div class="product-f-image">
-                                <img src="{{mainImage}}" alt="">
+                                <img src="{{product.mainImage}}" alt="">
                                 <div class="product-hover">
-                                    <a href="/add-to-cart/{{_id}}" class="add_to_cart_button add-to-cart-link"><i
-                                            class="fa fa-shopping-cart"></i> Add to
+                                    <a href="/add-to-cart/{{product._id}}"
+                                        class="add_to_cart_button add-to-cart-link"><i class="fa fa-shopping-cart"></i>
+                                        Add to
                                         cart</a>
-                                    <a href="/single-product/{{_id}}" class="view-details-link"><i
+                                    <a href="/single-product/{{product._id}}" class="view-details-link"><i
                                             class="fa fa-link"></i>
                                         See details</a>
                                 </div>
                             </div>
 
-                            <h2><a href="/single-product/{{_id}}">{{productName}}</a></h2>
+                            <h2><a href="/single-product/{{product._id}}">{{name}}</a></h2>
                             <div class="stars-outer">
-                                <div class="stars-inner" style="width: {{getRatingWidth rateAverage }};"></div>
+                                <div class="stars-inner" style="width: {{getRatingWidth product.rateAverage }};"></div>
                             </div>
                             <div class="product-carousel-price">
-                                <ins>${{discount productPrice discount}}</ins> <del>${{productPrice}}</del>
+                                <ins>${{discount product.price product.discount}}</ins> <del>${{product.price}}</del>
                             </div>
                         </div>
                         {{!-- single-product --}}

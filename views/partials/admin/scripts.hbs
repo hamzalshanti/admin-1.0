@@ -19,7 +19,15 @@
 <script src="/admin/assets/js/demo.js"></script>
 
 <script>
-    $('#tags').tagsInput();
+    /*
+   $('#tags').tagsInput();
+
+   $('#tags_tag').keypress(async function () {
+       const response = await fetch(`/admin-panel/tags/${$(this).val()}`)
+       const tags = await response.json();
+       console.log(tags)
+   }) */
+
 </script>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -102,7 +110,7 @@
                     to
                 })
 
-                // Check Seen Or Not 
+                // Check Seen Or Not
                 outgoingMsg(msg, Date.now(), false, 'bottom');
                 e.target.elements.msg.value = '';
                 e.target.elements.msg.focus();

@@ -62,7 +62,7 @@
             rate: +rate_value,
             review: review.value
         }
-        fetch('/rate/{{product._id}}', {
+        fetch('/rate/{{product.product._id}}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -118,7 +118,7 @@
             const data = { qty: +qty }
 
 
-            fetch('/add-to-cart/{{product._id}}', {
+            fetch('/add-to-cart/{{product.product._id}}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -28,8 +28,8 @@ const mongoose = require('mongoose');
  * @param {string} type - type of item (herein product)
  * @param {array} arrayType
  */
-function display_add_product_page({ req, res, type, page, arrayType }) {
-  const args = set_render_args({ req, type, page, arrayType });
+function display_add_product_page({ req, res, type, page, arrayType, tags }) {
+  const args = set_render_args({ req, type, page, arrayType, tags });
   redirect_page({ res, type, args });
 }
 
@@ -41,11 +41,12 @@ async function display_edit_product_page({
   item,
   page,
   arrayType,
+  tags,
 }) {
-  const args = set_render_args({ req, type, page, arrayType });
+  const args = set_render_args({ req, type, page, arrayType, tags });
   args.isEdit = true;
-  let tags = await getTags(item.tags);
-  args.tags = separateTags(tags).replace(/(^,)|(,$)/g, '');
+  // let tags = await getTags(item.tags);
+  // args.tags = separateTags(tags).replace(/(^,)|(,$)/g, '');
   args.item = item;
   redirect_page({ res, type, args });
 }
@@ -100,10 +101,11 @@ async function modify_product_fields({ req, fields }) {
       const result = await cloudinary.uploader.upload(content);
       fields.mainImage = result.secure_url;
     }
-  fields.tags = await formatTags(req.body.tags);
+  // fields.tags = await formatTags(req.body.tags);
   return fields;
 }
 
+/*
 async function formatTags(tags) {
   tags = tags.split(',');
   const arr = await Promise.all(
@@ -134,7 +136,7 @@ function separateTags(tags) {
   }, '');
   return separateTags;
 }
-
+*/
 async function addTranslationProduct(fields, id) {
   const translations = [];
   codes.forEach((code) => {
@@ -145,7 +147,7 @@ async function addTranslationProduct(fields, id) {
       product: id,
     });
   });
-  await productTranslation.create(translations);
+  await ProductTranslation.create(translations);
 }
 
 function getFields(req) {

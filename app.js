@@ -28,6 +28,7 @@ const {
   discount,
   getRatingWidth,
   rateProgress,
+  filterTags,
 } = require('./config/helpers');
 
 // Database Excution
@@ -68,6 +69,7 @@ app.engine(
       discount,
       getRatingWidth,
       rateProgress,
+      filterTags,
     },
   })
 );

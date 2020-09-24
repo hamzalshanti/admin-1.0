@@ -4,7 +4,7 @@ const { getErrorsObject } = require('../authFn');
 /*********** Common Functions ****************/
 
 // Put Args For Render Function
-function set_render_args({ req, type, page, arrayType = [] }) {
+function set_render_args({ req, type, page, arrayType = [], tags = [] }) {
   let args = {
     layout: 'admin',
     errorObject: req.flash('errorObject')[0],
@@ -12,6 +12,9 @@ function set_render_args({ req, type, page, arrayType = [] }) {
     arrayType,
     item: req.flash(type)[0],
   };
+  if (tags.length !== 0) {
+    args.tags = tags.map((tag) => tag.toJSON());
+  }
   try {
     args.arrayType = arrayType.map((arr) => arr.toJSON());
     return args;

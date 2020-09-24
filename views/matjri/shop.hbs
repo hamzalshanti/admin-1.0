@@ -22,18 +22,18 @@
                     <div class="product-upper">
                         <img src="{{mainImage}}" alt="">
                     </div>
-                    <h2><a href="/single-product/{{_id}}">{{productName}}</a></h2>
+                    <h2><a href="/single-product/{{product._id}}">{{name}}</a></h2>
                     <div class="stars-outer">
-                        <div class="stars-inner" style="width: {{getRatingWidth rateAverage }};">
+                        <div class="stars-inner" style="width: {{getRatingWidth product.rateAverage }};">
                         </div>
                     </div>
                     <div class="product-carousel-price">
-                        <ins>${{discount productPrice discount}}</ins> <del>${{productPrice}}</del>
+                        <ins>${{discount product.price product.discount}}</ins> <del>${{product.price}}</del>
                     </div>
 
                     <div class="product-option-shop">
                         <a class="add_to_cart_button" data-quantity="1" data-product_sku="" data-product_id="70"
-                            rel="nofollow" href="/add-to-cart/{{_id}}">Add to cart</a>
+                            rel="nofollow" href="/add-to-cart/{{product._id}}">Add to cart</a>
                     </div>
                 </div>
             </div>

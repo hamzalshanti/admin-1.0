@@ -1,5 +1,6 @@
 const Tag = require('../../models/tagModel');
 const TagTranslation = require('../../models/tagTranslationModel');
+const mongoose = require('mongoose');
 const { validationResult } = require('express-validator');
 const { show_items } = require('../../functions/adminFunctions/commonFn');
 const {
@@ -10,6 +11,7 @@ const {
   formatEditInputs,
   getFields,
 } = require('../../functions/adminFunctions/tagFn');
+const { Mongoose } = require('mongoose');
 
 const type = 'tag';
 let page = '';
@@ -27,7 +29,9 @@ let page = '';
  */
 const get_show_tags = async (req, res) => {
   try {
-    const items = await Tag.find();
+    const items = await TagTranslation.find({
+      code: 'en',
+    });
     show_items({ req, res, type, items });
   } catch (error) {
     console.log(error);
@@ -93,6 +97,9 @@ const put_edit_tag = async (req, res) => {
 const delete_tag = async (req, res) => {
   try {
     await Tag.findByIdAndDelete(req.body.id);
+    await TagTranslation.deleteMany({
+      tag: mongoose.Types.ObjectId(req.body.id),
+    });
     res.redirect('/admin-panel/tag/show');
   } catch {}
 };

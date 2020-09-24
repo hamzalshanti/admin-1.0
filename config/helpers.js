@@ -1,4 +1,5 @@
 const isEqual = function (v1, v2, options) {
+  console.log(v1, v2);
   if (v1.toString() === v2.toString()) {
     return options.fn(this);
   }
@@ -19,9 +20,17 @@ const rateProgress = function (starRate, totalCount) {
   return `${(starRate / totalCount) * 100}%`;
 };
 
+const filterTags = function (tags, anotherTag, options) {
+  for (let tag of tags) {
+    if (tag.toString() === anotherTag.toString()) return options.fn(this);
+  }
+  return options.inverse(this);
+};
+
 module.exports = {
   isEqual,
   discount,
   getRatingWidth,
   rateProgress,
+  filterTags,
 };
