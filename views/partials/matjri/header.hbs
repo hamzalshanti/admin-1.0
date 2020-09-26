@@ -54,9 +54,9 @@
                                     class="key">{{dictionary.header.currency}} :</span><span class="value">USD </span><b
                                     class="caret"></b></a>
                             <ul class="dropdown-menu">
-                                <li><a href="#">USD</a></li>
-                                <li><a href="#">INR</a></li>
-                                <li><a href="#">GBP</a></li>
+                                <li class="_currency" data-local="USD">$ Dollar</li>
+                                <li class="_currency" data-local="EUR">€ Euro</li>
+                                <li class="_currency" data-local="ILS">₪ Shikle</li>
                             </ul>
                         </li>
 
@@ -88,8 +88,8 @@
 
             <div class="col-sm-6">
                 <div class="shopping-item">
-                    <a href="/cart">Cart - <span class="cart-amunt">${{totalPrice}}</span> <i
-                            class="fa fa-shopping-cart"></i>
+                    <a href="/cart">Cart - <span class="cart-amunt">{{currencySymbol}}<span
+                                class="format-number">{{totalPrice}}</span></span> <i class="fa fa-shopping-cart"></i>
                         <span class="product-count">{{totalQty}}</span></a>
                 </div>
             </div>

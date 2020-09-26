@@ -77,6 +77,7 @@ const post_signup = async (req, res) => {
  * @param {object} res - response object
  */
 const get_logout = (req, res) => {
+  res.cookie('_user', { expires: Date.now() });
   req.logout();
   res.redirect('/');
 };

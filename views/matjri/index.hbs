@@ -104,7 +104,9 @@
                                 <div class="stars-inner" style="width: {{getRatingWidth product.rateAverage }};"></div>
                             </div>
                             <div class="product-carousel-price">
-                                <ins>${{discount product.price product.discount}}</ins> <del>${{product.price}}</del>
+                                <ins>{{../currencySymbol}}<span
+                                        class="format-number">{{discount product.price product.discount}}</span></ins>
+                                <del>{{../currencySymbol}}<span class="format-number">{{product.price}}</span></del>
                             </div>
                         </div>
                         {{!-- single-product --}}
@@ -152,7 +154,8 @@
                         <h2><a href="single-product.html">Sony Smart TV - 2015</a></h2>
 
                         <div class="product-wid-price">
-                            <ins>$400.00</ins> <del>$425.00</del>
+                            <ins>{{currencySymbol}}<span class="format-number">400.00</span></ins>
+                            <del>{{currencySymbol}}<span class="format-number">425.00<span class="format-number"></del>
                         </div>
                     </div>
                 </div>

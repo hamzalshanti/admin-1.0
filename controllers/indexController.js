@@ -11,6 +11,8 @@ const Chat = require('../models/chatModel');
 const { isRateBefore, getRateDetails } = require('../functions/rateFn');
 const getLatestTextedUsers = require('../functions/getLatestUserTexted');
 const mongoose = require('mongoose');
+const { AppError, catchAsync } = require('../Error');
+const { formatCurrency, formatCurrencyCart } = require('../config/currency');
 
 /**
  * Index controllers of Route: /
@@ -23,14 +25,18 @@ const mongoose = require('mongoose');
  * @param {object} req - request object
  * @param {object} res - response object
  */
-const get_index = async (req, res) => {
-  const recentProducts = await getRecentProducts(req.cookies._local, 6);
+const get_index = catchAsync(async (req, res, next) => {
+  let recentProducts = await getRecentProducts(req.cookies._local, 6);
+  if (req.cookies._currency != 'USD')
+    recentProducts = await formatCurrency(
+      req.cookies._currency,
+      recentProducts
+    );
   res.render('matjri/index', {
     title: 'Home',
     recentProducts: recentProducts.map((product) => product.toJSON()),
-    dictionary: require('../config/lang')(req.cookies._local),
   });
-};
+});
 
 /**
  * Controller of Route/cart
@@ -39,11 +45,13 @@ const get_index = async (req, res) => {
  * @param {object} req - request object
  * @param {object} res - response object
  */
-const get_cart = (req, res) => {
+const get_cart = async (req, res) => {
   if (!req.session.cart) return res.render('matjri/cart', { products: null });
-  const cart = new Cart(req.session.cart);
+  let cart = new Cart(JSON.parse(JSON.stringify(req.session.cart)));
+  if (req.cookies._currency != 'USD')
+    await formatCurrencyCart(req.cookies._currency, cart);
   res.render('matjri/cart', {
-    products: cart.getArrayOfItems(),
+    productsInCart: await cart.getArrayOfItems(req.cookies._local),
     totalPrice: cart.totalPrice,
     coupon: cart.coupon,
   });
@@ -56,15 +64,16 @@ const get_cart = (req, res) => {
  * @param {object} req - request object
  * @param {object} res - response object
  */
-const get_shop = async (req, res) => {
+const get_shop = catchAsync(async (req, res) => {
   const { page = 1, limit = 12 } = req.query;
-  const products = await ProductTranslation.find({
+  let products = await ProductTranslation.find({
     code: req.cookies._local || 'en',
   })
     .limit(limit * 1)
     .skip((page - 1) * limit)
     .populate('product');
-
+  if (req.cookies._currency != 'USD')
+    products = await formatCurrency(req.cookies._currency, products);
   const count = await Product.countDocuments();
   let totalPages = Math.ceil(count / limit),
     currentPage = page;
@@ -74,7 +83,7 @@ const get_shop = async (req, res) => {
     totalPages,
     page,
   });
-};
+});
 
 /**
  * Controller of Route/single-product
@@ -83,11 +92,16 @@ const get_shop = async (req, res) => {
  * @param {object} req - request object
  * @param {object} res - response object
  */
-const get_single_product = async (req, res) => {
-  const product = await ProductTranslation.findOne({
+const get_single_product = catchAsync(async (req, res, next) => {
+  let product = await ProductTranslation.findOne({
     code: req.cookies._local || 'en',
     product: mongoose.Types.ObjectId(req.params.id),
   }).populate('product');
+
+  if (!product) return next(new AppError('No tour found with that ID', 404));
+
+  product = await formatCurrency(req.cookies._currency, product);
+
   const category = await CategoryTranslation.findOne({
     code: req.cookies._local || 'en',
     category: product['product'].category,
@@ -103,7 +117,7 @@ const get_single_product = async (req, res) => {
   }).select({
     name: 1,
   });
-  const relatedProducts = await ProductTranslation.find({
+  let relatedProducts = await ProductTranslation.find({
     code: req.cookies._local || 'en',
   })
     .nor({
@@ -112,7 +126,13 @@ const get_single_product = async (req, res) => {
     .populate('product')
     .limit(6);
 
-  const recentProducts = await getRecentProducts(req.cookies._local, 4);
+  relatedProducts = await formatCurrency(
+    req.cookies._currency,
+    relatedProducts
+  );
+
+  let recentProducts = await getRecentProducts(req.cookies._local, 4);
+  recentProducts = await formatCurrency(req.cookies._currency, recentProducts);
 
   /** Get Reviews Details */
   const rates = await Rate.find({ productId: req.params.id });
@@ -132,7 +152,7 @@ const get_single_product = async (req, res) => {
     RateDetails,
     isOpenReview,
   });
-};
+});
 
 /**
  * Controller of Route/checkout
@@ -187,11 +207,17 @@ const add_to_cart = async (req, res) => {
     let qtyStep = req.body.qty ? req.body.qty : 1;
     const productId = req.params.id;
     const cart = new Cart(req.session.cart ? req.session.cart : {}, qtyStep);
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).select({
+      price: 1,
+      discount: 1,
+      mainImage: 1,
+    });
     cart.add(product, product._id);
     req.session.cart = cart;
     res.status(201).json('Add Done');
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const add_coupon = async (req, res) => {
@@ -216,7 +242,10 @@ const update_cart = async (req, res) => {
   const cart = new Cart(req.session.cart);
   await Promise.all(
     req.body.map(async (element) => {
-      const product = await Product.findById(element.id);
+      const product = await Product.findById(element.id).select({
+        price: 1,
+        discount: 1,
+      });
       if (product) {
         const qty = element.qty;
         cart.update(product, product._id, qty);

@@ -13,7 +13,8 @@
             <img src="{{product.mainImage}}" class="recent-thumb" alt="">
             <h2><a href="/single-product/{{product._id}}">{{name}}</a></h2>
             <div class="product-sidebar-price">
-                <ins>${{discount product.price product.discount}}</ins> <del>${{product.price}}</del>
+                <ins>{{../currencySymbol}}{{discount product.price product.discount}}</ins>
+                <del>{{../currencySymbol}}{{product.price}}</del>
             </div>
         </div>
         {{/each}}

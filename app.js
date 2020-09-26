@@ -14,7 +14,13 @@ const db = require('./config/db');
 const Chat = require('./models/chatModel');
 const User = require('./models/userModel');
 const getLatestTextedUsers = require('./functions/getLatestUserTexted');
+const { formatValue, currencySymbol } = require('./config/currency');
 const getUnseenMsgs = require('./functions/getUnseenMessages');
+const {
+  sendErrorDevelopment,
+  sendErrorProduction,
+  AppError,
+} = require('./Error');
 const app = express();
 
 // Routes Decleration
@@ -89,12 +95,17 @@ app.use(async (req, res, next) => {
   }
   if (req.session.cart) {
     res.locals.totalQty = req.session.cart.totalQty;
-    res.locals.totalPrice = req.session.cart.totalPrice;
+    res.locals.totalPrice = await formatValue(
+      req.cookies._currency,
+      req.session.cart.totalPrice
+    );
   } else {
     res.locals.totalQty = 0;
     res.locals.totalPrice = 0;
   }
-  if (req.user) res.locals.userSessionID = req.user._id.toString();
+  res.locals.dictionary = require('./config/lang')(req.cookies._local);
+  res.locals.currencySymbol = currencySymbol[req.cookies._currency] || '$';
+
   next();
 });
 
@@ -102,17 +113,6 @@ app.use(async (req, res, next) => {
 app.use('/', indexRoutes);
 app.use('/auth', authRoutes);
 app.use('/admin-panel', adminRoutes);
-
-// Error handle
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('404');
-});
 
 // Server Running
 const PORT = process.env.PORT || 2020;
@@ -193,4 +193,20 @@ io.on('connection', (socket) => {
   socket.on('leaveRoom', () => {
     console.log('LeaveRoom');
   });
+});
+
+// app.use((req, res, next) => {
+//   throw new AppError('Page Not Found', 404);
+// });
+
+// Error handle
+app.use(function (err, req, res, next) {
+  // console.log(err);
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+  if (process.env.NODE_ENV === 'development') {
+    sendErrorDevelopment(err, res);
+  } else if (process.env.NODE_ENV === 'production') {
+    sendErrorProduction(err, res);
+  }
 });

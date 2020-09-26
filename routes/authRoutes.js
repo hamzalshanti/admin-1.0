@@ -29,10 +29,13 @@ router.post(
   '/login',
   registerGuard,
   passport.authenticate('local', {
-    successRedirect: '/',
     failureRedirect: '/auth/login',
     failureFlash: true,
-  })
+  }),
+  function (req, res) {
+    res.cookie('_user', req.user._id.toString());
+    res.redirect('/');
+  }
 );
 
 // @desc    Auth with Google
@@ -50,8 +53,11 @@ router.get(
   registerGuard,
   passport.authenticate('google', {
     failureRedirect: '/auth/login',
-    successRedirect: '/',
-  })
+  }),
+  function (req, res) {
+    res.cookie('_user', req.user._id.toString());
+    res.redirect('/');
+  }
 );
 
 router.get(
@@ -65,8 +71,11 @@ router.get(
   registerGuard,
   passport.authenticate('facebook', {
     failureRedirect: '/auth/login',
-    successRedirect: '/',
-  })
+  }),
+  function (req, res) {
+    res.cookie('_user', req.user._id.toString());
+    res.redirect('/');
+  }
 );
 
 // @GET     @DESC: logout

@@ -43,8 +43,8 @@
                             <div class="product-inner">
                                 <h2 class="product-name">{{product.name}}</h2>
                                 <div class="product-inner-price">
-                                    <ins>{{discount product.product.price product.product.discount}}</ins>
-                                    <del>${{product.product.price}}</del>
+                                    <ins>{{currencySymbol}}{{discount product.product.price product.product.discount}}</ins>
+                                    <del>{{currencySymbol}}{{product.product.price}}</del>
                                 </div>
 
                                 <form action="" class="cart">
@@ -194,6 +194,7 @@
 
                             </div>
                         </div>
+                        <input type="hidden" id="product_id" value="{{product.product._id}}">
                     </div>
 
 
@@ -219,8 +220,8 @@
                                 <h2><a href="/single-product/{{product._id}}">{{name}}</a></h2>
 
                                 <div class="product-carousel-price">
-                                    <ins>${{discount product.price product.discount}}</ins>
-                                    <del>${{product.price}}</del>
+                                    <ins>{{../currencySymbol}}{{discount product.price product.discount}}</ins>
+                                    <del>{{../currencySymbol}}{{product.price}}</del>
                                 </div>
                             </div>
                             {{!-- /single-product --}}

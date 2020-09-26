@@ -1,3 +1,6 @@
+const ProductTranslation = require('./productTranslationModel');
+const Product = require('./productModel');
+
 module.exports = function Cart(oldCart, qtyStep = 1) {
   this.items = oldCart.items || {};
   this.totalQty = oldCart.totalQty || 0;
@@ -9,7 +12,7 @@ module.exports = function Cart(oldCart, qtyStep = 1) {
       storedItem = this.items[id] = { item: item, qty: 0, price: 0 };
     }
     const priceAfterDiscount =
-      storedItem.item.productPrice * (1 - storedItem.item.discount / 100);
+      storedItem.item.price * (1 - storedItem.item.discount / 100);
 
     storedItem.qty += qtyStep;
     storedItem.price = priceAfterDiscount * storedItem.qty;
@@ -22,7 +25,7 @@ module.exports = function Cart(oldCart, qtyStep = 1) {
       storedItem = this.items[id] = { item: item, qty: 0, price: 0 };
     }
     const priceAfterDiscount =
-      storedItem.item.productPrice * (1 - storedItem.item.discount / 100);
+      storedItem.item.price * (1 - storedItem.item.discount / 100);
 
     this.totalQty -= storedItem.qty;
     this.totalPrice -= storedItem.qty * priceAfterDiscount;
@@ -36,11 +39,19 @@ module.exports = function Cart(oldCart, qtyStep = 1) {
     this.totalQty -= this.items[id].qty;
     delete this.items[id];
   };
-  this.getArrayOfItems = function () {
-    let itemsArray = [];
+  this.getArrayOfItems = async function (_local = 'en') {
+    let productsInCart = [];
     for (let id in this.items) {
-      itemsArray.push(this.items[id]);
+      const product = await ProductTranslation.findOne({
+        code: _local,
+        product: id,
+      }).select({
+        name: 1,
+        description: 1,
+        _id: 0,
+      });
+      productsInCart.push({ ...this.items[id], ...product.toJSON() });
     }
-    return itemsArray;
+    return productsInCart;
   };
 };

@@ -28,12 +28,14 @@
                         </div>
                     </div>
                     <div class="product-carousel-price">
-                        <ins>${{discount product.price product.discount}}</ins> <del>${{product.price}}</del>
+                        <ins>{{../currencySymbol}}<span
+                                class="format-number">{{discount product.price product.discount}}</span></ins>
+                        <del>{{../currencySymbol}}<span class="format-number">{{product.price}}</span></del>
                     </div>
 
                     <div class="product-option-shop">
                         <a class="add_to_cart_button" data-quantity="1" data-product_sku="" data-product_id="70"
-                            rel="nofollow" href="/add-to-cart/{{product._id}}">Add to cart</a>
+                            rel="nofollow" href="/add-to-cart/{{product._id}}" data-id="">Add to cart</a>
                     </div>
                 </div>
             </div>
@@ -63,3 +65,5 @@
         </div>
     </div>
 </div>
+<input type="hidden" id="total_pages" value="{{totalPages}}">
+<input type="hidden" id="page" value="{{page}}">
