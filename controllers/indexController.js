@@ -74,6 +74,7 @@ const get_shop = catchAsync(async (req, res) => {
     .populate('product');
   if (req.cookies._currency != 'USD')
     products = await formatCurrency(req.cookies._currency, products);
+
   const count = await Product.countDocuments();
   let totalPages = Math.ceil(count / limit),
     currentPage = page;
@@ -117,6 +118,9 @@ const get_single_product = catchAsync(async (req, res, next) => {
   }).select({
     name: 1,
   });
+  const vendor = await User.findById(product['product'].createdBy).select({
+    fullName: 1,
+  });
   let relatedProducts = await ProductTranslation.find({
     code: req.cookies._local || 'en',
   })
@@ -151,6 +155,7 @@ const get_single_product = catchAsync(async (req, res, next) => {
     recentProducts: recentProducts.map((product) => product.toJSON()),
     RateDetails,
     isOpenReview,
+    vendor: vendor.toJSON(),
   });
 });
 
@@ -307,6 +312,15 @@ const get_messages = async (req, res) => {
   });
 };
 
+const get_vendor = async (req, res) => {
+  const vendor = await User.findOne({
+    _id: req.params.id,
+  });
+  res.render('matjri/vendor', {
+    vendor: vendor.toJSON(),
+  });
+};
+
 /** Get recent products */
 async function getRecentProducts(_local = 'en', limit) {
   const products = await ProductTranslation.find({
@@ -332,4 +346,5 @@ module.exports = {
   delete_cart_item,
   chat_page,
   get_messages,
+  get_vendor,
 };

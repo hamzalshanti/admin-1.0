@@ -41,6 +41,11 @@ const productSchema = mongoose.Schema({
       ref: 'tag',
     },
   ],
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

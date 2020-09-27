@@ -36,12 +36,27 @@
     integrity="sha512-Q1f3TS3vSt1jQ8AwP2OuenztnLU6LwxgyyYOG1jgMW/cbEMHps/3wjvnl1P3WTrF3chJUWEoxDUEjMxDV8pujg=="
     crossorigin="anonymous"></script>
 <script>
+    function getCookie(cname) {
+        var name = cname + '=';
+        var decodedCookie = decodeURIComponent(document.cookie);
+        var ca = decodedCookie.split(';');
+        for (var i = 0; i < ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return '';
+    }
     // JoinChatPage
     notificationSocket.emit('joinChatPage', {
-        userId: '{{userSessionID}}'
+        userId: getCookie('_user')
     })
-    const chatLists = document.querySelectorAll('.chat_list');
-    const latestTextedUsers = document.querySelectorAll('.latest-texted-user-list')
+    const chatLists = [...document.querySelectorAll('.chat_list')];
+    const latestTextedUsers = [...document.querySelectorAll('.latest-texted-user-list')];
     const messageHistory = document.querySelector('.msg_history')
     const form = document.querySelector('.input_msg_write');
     const inputMsg = document.querySelector('.write_msg');
@@ -52,43 +67,9 @@
     let skip = 0;
     const spinner = document.createElement('div')
     spinner.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`
-    const from = '{{userSessionID}}'
+    const from = getCookie('_user')
     var isTyping = false;
     var timeout = undefined;
-    chatLists.forEach((element) => {
-        element.onclick = async function (e) {
-            e.preventDefault();
-            chatSocket.emit('leaveRoom');
-
-            //Active
-            chatLists.forEach(active => {
-                active.classList.remove('active_chat')
-            })
-            element.classList.add('active_chat');
-
-            to = element.getAttribute('href');
-            // Emit Join Chat
-            chatSocket.emit('joinChat', {
-                from,
-                to,
-            });
-
-            element.querySelector('.dot-of-chat-page').style.display = 'none';
-            messageHistory.innerHTML = '';
-            id_to = this.getAttribute('href')
-            skip = 0;
-            await chunkOfData(id_to);
-            messageHistory.scrollTop = messageHistory.scrollHeight;
-
-            //remove the dot Noti from list
-            latestTextedUsers.forEach(l => {
-                if (id_to === l.getAttribute('data-texted')) {
-                    l.querySelector('.dot-chat-list').innerHTML = ''
-                }
-            })
-        }
-    })
-
 
 
     if (form)
@@ -208,24 +189,48 @@
     }
 
     // Listen To Notifications
-    notificationSocket.on('noti', ({ from, msg, appendDotNoti }) => {
-        prependToTop(from, msg, appendDotNoti);
-    })
+    notificationSocket.on(
+        'noti',
+        ({ from, msg, fullName, image, appendDotNoti }) => {
+            prependToTop(from, msg, fullName, image, appendDotNoti);
+        }
+    );
 
-    function prependToTop(id, msg, appendDotNoti = false) {
-        chatLists.forEach(c => {
-            if (c.getAttribute('href') === id) {
-                c.querySelector('.chat_side_msg').innerHTML = msg;
-                c.querySelector('.chat_date').innerHTML = moment().calendar();
-                if (appendDotNoti) {
-                    c.querySelector('.dot-of-chat-page').style.display = 'inline-block'
-                    messagesAlert.style.display = 'inline-block'
+    function prependToTop(id, msg, fullName, image, appendDotNoti = false) {
+        let flag = true;
+        if (chatLists.length > 0) {
+            chatLists.forEach(c => {
+                if (c.getAttribute('href') === id) {
+                    flag = false;
+                    c.querySelector('.chat_side_msg').innerHTML = msg;
+                    c.querySelector('.chat_date').innerHTML = moment().calendar();
+                    if (appendDotNoti) {
+                        c.querySelector('.dot-of-chat-page').style.display = 'inline-block'
+                        messagesAlert.style.display = 'inline-block'
+                    }
+                    document.querySelector('.inbox_chat').prepend(c);
                 }
-                document.querySelector('.inbox_chat').prepend(c);
+            })
+            if (flag) {
+                const chat_list = createChatList(
+                    id,
+                    fullName,
+                    image,
+                    msg,
+                    moment().calendar()
+                );
+                if (appendDotNoti) {
+                    chat_list.querySelector('.dot-of-chat-page').style.display =
+                        'inline-block';
+                    messagesAlert.style.display = 'inline-block';
+                }
+                chatLists.push(chat_list);
+                document.querySelector('.inbox_chat').prepend(chat_list);
             }
-        })
+        }
         latestTextedUsers.forEach(c => {
             if (c.getAttribute('data-texted') === id) {
+                flag = false;
                 c.querySelector('.list-msg').innerHTML = msg;
                 c.querySelector('.list-date').innerHTML = moment().calendar();
                 if (appendDotNoti) {
@@ -238,6 +243,12 @@
                 document.querySelector('.chat-box').prepend(c);
             }
         })
+        if (flag) {
+            const list = createChatNoti(id, fullName, image, msg, moment().calendar());
+            messagesAlert.style.display = 'inline-block';
+            latestTextedUsers.push(list);
+            document.querySelector('.chat-box').prepend(list);
+        }
     }
 
     function showSpinner() {
@@ -283,15 +294,108 @@
 
     //on load
     window.onload = function () {
-        if (document.querySelector('.inbox_chat'))
-            document.querySelector('.inbox_chat').firstElementChild.click()
-        const getLastItem = thePath => thePath.substring(thePath.lastIndexOf('/') + 1)
-        chatLists.forEach(c => {
+        let flag = true;
+        // if (document.querySelector('.inbox_chat'))
+        //   document.querySelector('.inbox_chat').firstElementChild.click();
+        const getLastItem = (thePath) =>
+            thePath.substring(thePath.lastIndexOf('/') + 1);
+        chatLists.forEach((c) => {
             if (c.getAttribute('href') === getLastItem(window.location.href)) {
-                c.click()
-                history.pushState('', ' ', 'messages')
+                chatListsRunner();
+                c.click();
+                flag = false;
+                history.pushState('', ' ', 'messages');
             }
-        })
+        });
+        if (flag) {
+            fetch(`/chat/not-found/${getLastItem(window.location.href)}`)
+                .then((res) => res.json())
+                .then((data) => {
+                    const chat_list = createChatList(data._id, data.fullName, data.image);
+                    document.querySelector('.inbox_chat').prepend(chat_list);
+                    chatLists.push(chat_list);
+                    chatListsRunner();
+                    chat_list.click();
+                });
+        }
+    };
+
+    function chatListsRunner() {
+        chatLists.forEach((element) => {
+            element.onclick = async function (e) {
+                e.preventDefault();
+                chatSocket.emit('leaveRoom');
+                //Active
+                chatLists.forEach((active) => {
+                    active.classList.remove('active_chat');
+                });
+                element.classList.add('active_chat');
+
+                to = element.getAttribute('href');
+                // Emit Join Chat
+                chatSocket.emit('joinChat', {
+                    from,
+                    to,
+                });
+                element.querySelector('.dot-of-chat-page').style.display = 'none';
+                messageHistory.innerHTML = '';
+                id_to = this.getAttribute('href');
+                skip = 0;
+                await chunkOfData(id_to);
+                messageHistory.scrollTop = messageHistory.scrollHeight;
+
+                //remove the dot Noti from list
+                latestTextedUsers.forEach((l) => {
+                    if (id_to === l.querySelector('a').getAttribute('data-texted')) {
+                        l.querySelector('.dot-chat-list').innerHTML = '';
+                    }
+                });
+            };
+        });
+    }
+
+    function createChatList(userId, fullName, image, msg = '', date = '') {
+        const chat_list = document.createElement('a');
+        chat_list.setAttribute('href', userId);
+        chat_list.classList.add('chat_list');
+        chat_list.style.display = 'block';
+        chat_list.innerHTML = `
+<div class="chat_people">
+      <div class="chat_img"><img src="${image}" alt="sunil"></div>
+      <div class="chat_ib">
+          <h5>${fullName}<span class="chat_date">${date}</span>
+          </h5>
+          <p class="chat_side_msg">${msg}</p>
+      </div>
+      <div class="dot-of-chat-page">
+          <i class="fas fa-circle"></i>
+      </div>
+</div>
+`;
+        return chat_list;
+    }
+
+    function createChatNoti(userId, fullName, image, msg = '', date = '') {
+        const list = document.createElement('a');
+        list.classList.add('latest-texted-user-list', 'dropdown-item');
+        list.setAttribute('href', `/admin-panel/chat/${userId}`)
+        list.setAttribute('data-texted', userId)
+        list.innerHTML = `
+        <div class="media">
+                <img src="${image}" alt="User Avatar" class="img-size-50 img-circle mr-3">
+                    <div class="media-body">
+                        <h3 class="dropdown-item-title">
+                            ${fullName}
+
+                            <span class="float-right text-sm text-danger dot-chat-list">
+                                1
+                             </span>
+                        </h3>
+                        <p class="text-sm list-msg">${msg}</p>
+                        <p class="text-sm text-muted list-date"><i class="far fa-clock mr-1"></i>${date}</p>
+                    </div>
+          </div>`;
+        return list
     }
 
     const messageIcon = document.querySelector('.messages-dropdown')

@@ -14,7 +14,9 @@ const {
   delete_cart_item,
   chat_page,
   get_messages,
+  get_vendor,
 } = require('../controllers/indexController');
+
 const { siteGuard } = require('../middlewares/authMiddleware');
 const { buyerChatGuard } = require('../middlewares/chatMiddleware');
 const mongoose = require('mongoose');
@@ -37,5 +39,9 @@ router.get('/cart/delete/:id', delete_cart_item);
 router.get('/chat', siteGuard, buyerChatGuard, chat_page);
 router.get('/chat/:id', siteGuard, buyerChatGuard, chat_page);
 router.post('/get-messages', get_messages);
-
+router.get('/vendor/:id', get_vendor);
+router.get('/chat/not-found/:id', async (req, res) => {
+  const user = await User.findById(req.params.id);
+  res.json(user.toJSON());
+});
 module.exports = router;

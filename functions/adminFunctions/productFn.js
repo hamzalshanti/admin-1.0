@@ -157,6 +157,7 @@ function getFields(req) {
   fields.category = req.body.category;
   fields.discount = req.body.discount;
   fields.tags = req.body.tags;
+  fields.createdBy = req.user._id;
   codes.forEach((c) => {
     fields[`name_${c}`] = req.body[`name_${c}`];
     fields[`description_${c}`] = req.body[`description_${c}`];

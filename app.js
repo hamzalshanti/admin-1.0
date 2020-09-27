@@ -178,19 +178,23 @@ io.on('connection', (socket) => {
   socket.on('stopTyping', () => {
     socket.to(chatRoom).emit('stopTyping');
   });
-  socket.on('msgNotification', (data) => {
+  socket.on('msgNotification', async (data) => {
     let appendDotNoti = true;
     if (io.sockets.adapter.rooms[chatRoom])
       if (io.sockets.adapter.rooms[chatRoom].length === 2)
         appendDotNoti = false;
 
+    const user = await User.findById(data.from);
     io.to(data.to).emit('noti', {
       from: data.from,
       msg: data.msg,
+      fullName: user.fullName,
+      image: user.image,
       appendDotNoti: appendDotNoti,
     });
   });
   socket.on('leaveRoom', () => {
+    socket.leave(chatRoom);
     console.log('LeaveRoom');
   });
 });
